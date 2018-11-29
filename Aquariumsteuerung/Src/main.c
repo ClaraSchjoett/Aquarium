@@ -100,6 +100,16 @@ int main(void)
 
   /* USER CODE END 2 */
 
+
+  /* USER Tri Bao CODE RTC BEGIN 10 */
+
+    int a_bao=0;
+    a_bao +=1;
+
+  /* USER Tri Bao CODE RTC BEGIN 10 */
+
+
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
