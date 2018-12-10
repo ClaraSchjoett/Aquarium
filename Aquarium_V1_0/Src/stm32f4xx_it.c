@@ -213,6 +213,60 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /**
+  * @brief This function handles EXTI line 1 interrupt.
+  */
+void EXTI1_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI1_IRQn 0 */
+  // TODO what happens when button is pushed?
+
+  /* USER CODE END EXTI1_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
+  /* USER CODE BEGIN EXTI1_IRQn 1 */
+
+  /* USER CODE END EXTI1_IRQn 1 */
+}
+
+/**
+  * @brief This function handles EXTI line[9:5] interrupts.
+  */
+void EXTI9_5_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI9_5_IRQn 0 */
+
+
+  if(__HAL_GPIO_EXTI_GET_FLAG(GPIO_PIN_8)){
+	  //TODO what happens when the rotary encoder is turned and pulls potential of this pin to ground?
+	  //TODO check for set flag in main (polling) and call menu function if flag is set
+  }
+
+  if(__HAL_GPIO_EXTI_GET_FLAG(GPIO_PIN_9)){
+	  //TODO what happens when the rotary encoder is turned and pulls potential of this pin to ground?
+	  //TODO check for set flag in main (polling) and call menu function if flag is set
+  }
+  /* USER CODE END EXTI9_5_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_8);		// Clear interrupt flag
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_9);		// Clear interrupt flag
+  /* USER CODE BEGIN EXTI9_5_IRQn 1 */
+
+  /* USER CODE END EXTI9_5_IRQn 1 */
+}
+
+/**
+  * @brief This function handles EXTI line[15:10] interrupts.
+  */
+void EXTI15_10_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI15_10_IRQn 0 */
+
+  /* USER CODE END EXTI15_10_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_13);
+  /* USER CODE BEGIN EXTI15_10_IRQn 1 */
+
+  /* USER CODE END EXTI15_10_IRQn 1 */
+}
+
+/**
   * @brief This function handles RTC alarms A and B interrupt through EXTI line 17.
   */
 void RTC_Alarm_IRQHandler(void)
