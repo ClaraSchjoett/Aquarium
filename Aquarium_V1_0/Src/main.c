@@ -43,7 +43,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "led.h"
+
 
 /* USER CODE END Includes */
 
@@ -83,13 +83,14 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
-static void MX_TIM2_Init(void);
 static void MX_RTC_Init(void);
 
 /* USER CODE BEGIN PFP */
 static void MX_TIM4_Init(int duty);
 static void MX_TIM3_Init(int duty);
 static void MX_TIM8_Init(int duty);
+static void MX_TIM2_Init(int brightness);
+void set_FL(int brightness);//set brightness of the FL light
 void set_RGB(int red, int green, int blue); //set RGB value for led strip
 
 /* USER CODE END PFP */
@@ -129,10 +130,10 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   MX_I2C1_Init();
-  MX_TIM4_Init(0);
+  MX_TIM4_Init(0);//all PWM (for LED and FL) initialized with 0 (all lights off)
   MX_TIM3_Init(0);
   MX_TIM8_Init(0);
-  MX_TIM2_Init();
+  MX_TIM2_Init(0);
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
@@ -328,7 +329,7 @@ static void MX_RTC_Init(void)
   * @param None
   * @retval None
   */
-static void MX_TIM2_Init(void)
+static void MX_TIM2_Init(int brightness)
 {
 
   /* USER CODE BEGIN TIM2_Init 0 */
@@ -357,7 +358,7 @@ static void MX_TIM2_Init(void)
     Error_Handler();
   }
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 0;
+  sConfigOC.Pulse = brightness;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
   if (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_3) != HAL_OK)
@@ -365,7 +366,7 @@ static void MX_TIM2_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN TIM2_Init 2 */
-
+  HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_3);
   /* USER CODE END TIM2_Init 2 */
   HAL_TIM_MspPostInit(&htim2);
 
@@ -635,6 +636,11 @@ void set_RGB(int red, int green, int blue)
 	MX_TIM4_Init(red);
 	MX_TIM3_Init(green);
 	MX_TIM8_Init(blue);
+}
+
+void set_FL(int brightness)
+{
+	MX_TIM2_Init(brightness);
 }
 /* USER CODE END 4 */
 
