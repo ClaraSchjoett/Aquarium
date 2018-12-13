@@ -82,6 +82,17 @@ UART_HandleTypeDef huart2;
 int flag = 0;			// Interrupt reason: 0 = button, 1 = rotary channel a; 2 = rotary channel b.
 int *pflag = &flag;		// Enables us to access variable flag in other source files.
 
+int sunset_timer=0;
+int sunrise_timer=0;
+//int sunset_sec_counter=0;
+//int sunrise_sec_counter=0;
+int red_counter=0;
+int green_counter=0;
+int blue_counter=0;
+int red=0;
+int green=0;
+int blue=0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -172,12 +183,44 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-	set_RGB(25,0,0);
-	HAL_Delay(1000);
-	set_RGB(75,0,0);
-	HAL_Delay(1000);
-	set_RGB(100,0,0);
-	HAL_Delay(1000);
+
+	RTC_get_Time_and_Date();
+	if((red<=100) && (green<=100) && (blue<=100))
+	{
+		if(sunrise_timer<myTime.Seconds)
+		{
+			red_counter++;
+			green_counter++;
+			blue_counter++;
+			if(red_counter>=1)
+			{
+				red_counter=0;
+				red++;
+			}
+			if(green_counter>=2)
+			{
+				green_counter=0;
+				green++;
+			}
+			if(blue_counter>=20)
+			{
+				blue_counter=0;
+				blue++;
+			}
+			set_RGB(red,green,blue);
+		}
+		sunrise_timer=myTime.Seconds;
+	}
+
+
+
+
+
+
+
+
+
+
 
 	switch (flag) {	 		// Interrupt triggers menu display and enables navigation
 	case 1:
@@ -193,6 +236,7 @@ int main(void)
 		// TODO start menu navigation
 		break;
 	default:
+		break;
 
 	}
 
