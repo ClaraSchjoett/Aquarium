@@ -43,7 +43,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "i2c-lcd.h"
 
 /* USER CODE END Includes */
 
@@ -92,6 +92,10 @@ static void MX_TIM8_Init(int duty);
 static void MX_TIM2_Init(int brightness);
 void set_FL(int brightness);//set brightness of the FL light
 void set_RGB(int red, int green, int blue); //set RGB value for led strip
+//void lcd_send_string (char *str);
+//void lcd_init (void);
+//void lcd_send_data (char data);
+//void lcd_send_cmd (char cmd);
 
 /* USER CODE END PFP */
 
@@ -136,7 +140,12 @@ int main(void)
   MX_TIM2_Init(0);
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+
+  lcd_init();
+
+  lcd_send_string("Hallo world");
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -146,6 +155,14 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  uint8_t pData;
+	  pData = 0x0F;
+
+	  HAL_I2C_Master_Transmit(&hi2c1, 0x4E, &pData, 1, 10);
+
+	  pData = 0x0C;
+
+	  HAL_I2C_Master_Transmit(&hi2c1, 0x4E, &pData, 1, 10);
 
 	set_RGB(25,0,0);
 	HAL_Delay(1000);
@@ -239,6 +256,11 @@ static void MX_I2C1_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN I2C1_Init 2 */
+
+void text_to_lcd (int linenumber, char text)
+{
+	// Funktion zur Textausgabe
+}
 
   /* USER CODE END I2C1_Init 2 */
 
@@ -642,6 +664,9 @@ void set_FL(int brightness)
 {
 	MX_TIM2_Init(brightness);
 }
+
+
+
 /* USER CODE END 4 */
 
 /**
