@@ -219,6 +219,8 @@ void EXTI1_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI1_IRQn 0 */
   // TODO what happens when button is pushed?
+  *pflag = 1;
+
 
   /* USER CODE END EXTI1_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
@@ -234,15 +236,16 @@ void EXTI9_5_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI9_5_IRQn 0 */
 
-
   if(__HAL_GPIO_EXTI_GET_FLAG(GPIO_PIN_8)){
 	  //TODO what happens when the rotary encoder is turned and pulls potential of this pin to ground?
 	  //TODO check for set flag in main (polling) and call menu function if flag is set
+	  *pflag = 2;
   }
 
   if(__HAL_GPIO_EXTI_GET_FLAG(GPIO_PIN_9)){
 	  //TODO what happens when the rotary encoder is turned and pulls potential of this pin to ground?
 	  //TODO check for set flag in main (polling) and call menu function if flag is set
+	  *pflag = 3;
   }
   /* USER CODE END EXTI9_5_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_8);		// Clear interrupt flag

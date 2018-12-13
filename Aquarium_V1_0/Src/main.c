@@ -78,10 +78,9 @@ TIM_HandleTypeDef htim8;
 
 UART_HandleTypeDef huart2;
 
+/* USER CODE BEGIN PV */
 int flag = 0;			// Interrupt reason: 0 = button, 1 = rotary channel a; 2 = rotary channel b.
 int *pflag = &flag;		// Enables us to access variable flag in other source files.
-
-/* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
 
@@ -179,6 +178,25 @@ int main(void)
 	HAL_Delay(1000);
 	set_RGB(100,0,0);
 	HAL_Delay(1000);
+
+	switch (flag) {	 		// Interrupt triggers menu display and enables navigation
+	case 1:
+		// TODO start countdown LCD illuminance timer
+		// TODO start menu navigation
+		break;
+	case 2:
+		// TODO start countdown LCD illuminance timer
+		// TODO start menu navigation
+		break;
+	case 3:
+		// TODO start countdown LCD illuminance timer
+		// TODO start menu navigation
+		break;
+	default:
+
+	}
+
+	pflag = 0;
 
   }
   /* USER CODE END 3 */
