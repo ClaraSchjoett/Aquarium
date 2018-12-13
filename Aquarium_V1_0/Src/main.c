@@ -96,7 +96,6 @@ static void MX_RTC_Init(void);
 static void MX_TIM4_Init(int duty);
 static void MX_TIM3_Init(int duty);
 static void MX_TIM8_Init(int duty);
-static void MX_TIM2_Init(void);
 static void MX_RTC_Init(void);
 void RTC_get_Time_and_Date(void);
 /* USER CODE BEGIN PFP */
@@ -186,13 +185,6 @@ int main(void)
 }
 
 
-
-void set_RGB(int red, int green, int blue)
-{
-	MX_TIM4_Init(red);
-	MX_TIM3_Init(green);
-	MX_TIM8_Init(blue);
-}
 
 /* USER CODE BEGIN RTC_ShowTime */
 void RTC_get_Time_and_Date(void)
