@@ -183,6 +183,7 @@ int main(void)
 	case 1:
 		// TODO start countdown LCD illuminance timer
 		// TODO start menu navigation
+		// Kommentar Testzweck
 		break;
 	case 2:
 		// TODO start countdown LCD illuminance timer
