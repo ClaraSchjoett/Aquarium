@@ -74,6 +74,9 @@ TIM_HandleTypeDef htim8;
 
 UART_HandleTypeDef huart2;
 
+int flag = 0;			// Interrupt reason: 0 = button, 1 = rotary channel a; 2 = rotary channel b.
+int *pflag = &flag;		// Enables us to access variable flag in other source files.
+
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */

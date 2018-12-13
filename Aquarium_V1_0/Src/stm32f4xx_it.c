@@ -57,7 +57,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-
+extern int *pflag;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
