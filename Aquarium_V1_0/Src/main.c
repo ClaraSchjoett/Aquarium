@@ -66,6 +66,10 @@
 I2C_HandleTypeDef hi2c1;
 
 RTC_HandleTypeDef hrtc;
+RTC_TimeTypeDef myTime;
+RTC_DateTypeDef myDate;
+RTC_AlarmTypeDef myAlarm;
+
 
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
@@ -92,6 +96,10 @@ static void MX_RTC_Init(void);
 static void MX_TIM4_Init(int duty);
 static void MX_TIM3_Init(int duty);
 static void MX_TIM8_Init(int duty);
+static void MX_TIM2_Init(void);
+static void MX_RTC_Init(void);
+void RTC_get_Time_and_Date(void);
+/* USER CODE BEGIN PFP */
 static void MX_TIM2_Init(int brightness);
 void set_FL(int brightness);//set brightness of the FL light
 void set_RGB(int red, int green, int blue); //set RGB value for led strip
@@ -140,8 +148,24 @@ int main(void)
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
-  /* USER CODE END 2 */
 
+  /* USER CODE END 2 */
+  //Set time, data and alarm
+  	//1) Set time
+  	myTime.Hours = 12;
+  	myTime.Minutes = 59;
+  	myTime.Seconds = 45;
+  	HAL_RTC_SetTime(&hrtc, &myTime, RTC_FORMAT_BIN);
+  	//2) Set date
+  	myDate.Date = 6;
+  	myDate.Month = RTC_MONTH_DECEMBER;
+  	myDate.WeekDay = RTC_WEEKDAY_THURSDAY;
+  	myDate.Year = 18;
+  	HAL_RTC_SetDate(&hrtc, &myDate, RTC_FORMAT_BIN);
+  	//3)Set alarm
+
+  //To get time, data, use this
+  	//RTC_get_Time_and_Date();
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -160,6 +184,28 @@ int main(void)
   }
   /* USER CODE END 3 */
 }
+
+
+
+void set_RGB(int red, int green, int blue)
+{
+	MX_TIM4_Init(red);
+	MX_TIM3_Init(green);
+	MX_TIM8_Init(blue);
+}
+
+/* USER CODE BEGIN RTC_ShowTime */
+void RTC_get_Time_and_Date(void)
+{
+	  //1)Get time
+	  HAL_RTC_GetTime(&hrtc, &myTime, RTC_FORMAT_BIN);
+	  //2)Get data
+	  HAL_RTC_GetDate(&hrtc, &myDate, RTC_FORMAT_BIN);
+
+}
+/* USER CODE END RTC_Init 2 */
+
+
 
 /**
   * @brief System Clock Configuration
@@ -321,9 +367,7 @@ static void MX_RTC_Init(void)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN RTC_Init 2 */
 
-  /* USER CODE END RTC_Init 2 */
 
 }
 
