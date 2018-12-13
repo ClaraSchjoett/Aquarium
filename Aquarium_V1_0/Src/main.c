@@ -82,6 +82,12 @@ UART_HandleTypeDef huart2;
 int flag = 0;			// Interrupt reason: 0 = button, 1 = rotary channel a; 2 = rotary channel b.
 int *pflag = &flag;		// Enables us to access variable flag in other source files.
 
+GPIO_PinState stateA;
+GPIO_PinState previousA;
+GPIO_PinState *pstateA = &stateA;
+GPIO_PinState *ppreviousA = &previousA;
+
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -116,7 +122,7 @@ void set_RGB(int red, int green, int blue); //set RGB value for led strip
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+	uint8_t testcounter = 32;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -146,7 +152,7 @@ int main(void)
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
-
+  previousA = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_8);
   /* USER CODE END 2 */
   //Set time, data and alarm
   	//1) Set time
@@ -172,32 +178,32 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-	set_RGB(25,0,0);
-	HAL_Delay(1000);
-	set_RGB(75,0,0);
-	HAL_Delay(1000);
-	set_RGB(100,0,0);
-	HAL_Delay(1000);
+//	set_RGB(25,0,0);
+//	HAL_Delay(1000);
+//	set_RGB(75,0,0);
+//	HAL_Delay(1000);
+//	set_RGB(100,0,0);
+//	HAL_Delay(1000);
 
-	switch (flag) {	 		// Interrupt triggers menu display and enables navigation
+	switch (*pflag) {	 		// Interrupt triggers menu display and enables navigation
 	case 1:
 		// TODO start countdown LCD illuminance timer
 		// TODO start menu navigation
-		// Kommentar Testzweck
+		testcounter = testcounter + 4;
 		break;
 	case 2:
 		// TODO start countdown LCD illuminance timer
 		// TODO start menu navigation
+		testcounter++;
 		break;
 	case 3:
 		// TODO start countdown LCD illuminance timer
 		// TODO start menu navigation
+		testcounter--;
 		break;
-	default:
 
 	}
-
-	pflag = 0;
+	*pflag = 0;
 
   }
   /* USER CODE END 3 */
@@ -650,10 +656,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PC1 */
+  /*Configure GPIO pin : PC1. BUTTON */
   GPIO_InitStruct.Pin = GPIO_PIN_1;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pins : LD2_Pin PA6 */
@@ -663,9 +669,9 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PA8 PA9 */
+  /*Configure GPIO pins : PA8 PA9. ROTARY ENCODER channel A and channel B */
   GPIO_InitStruct.Pin = GPIO_PIN_8|GPIO_PIN_9;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 

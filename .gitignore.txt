@@ -4,6 +4,7 @@
 
 # Windows
 Thumbs.db*
+*.xlsx
 
 #Atollic
 .cproject
