@@ -40,6 +40,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include <string.h>
 //#include "led.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -66,6 +67,10 @@
 I2C_HandleTypeDef hi2c1;
 
 RTC_HandleTypeDef hrtc;
+RTC_TimeTypeDef sTime;
+RTC_DateTypeDef sDate;
+RTC_AlarmTypeDef sAlarm;
+char ShowTime[2]= {0};
 
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
@@ -88,6 +93,7 @@ static void MX_TIM3_Init(int duty);
 static void MX_TIM8_Init(int duty);
 static void MX_TIM2_Init(void);
 static void MX_RTC_Init(void);
+void RTC_ShowTime(void);
 /* USER CODE BEGIN PFP */
 void set_RGB(int red, int green, int blue); //set RGB value for led strip
 
@@ -135,8 +141,27 @@ int main(void)
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
-  /* USER CODE END 2 */
 
+  /* USER CODE END 2 */
+  //Set time, data and alarm
+  	//1) Set time
+  	sTime.Hours = 12;
+  	sTime.Minutes = 59;
+  	sTime.Seconds = 45;
+  	HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+  	//2) Set date
+  	sDate.Date = 6;
+  	sDate.Month = RTC_MONTH_DECEMBER;
+  	sDate.WeekDay = RTC_WEEKDAY_THURSDAY;
+  	sDate.Year = 18;
+  	HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+  	//3)Set alarm
+
+  //Get time, data
+  	//4)Get time
+  	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+  	//5)Get data
+  	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -144,7 +169,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
+	RTC_ShowTime();
 	set_RGB(25,0,0);
 	HAL_Delay(1000);
 	set_RGB(75,0,0);
@@ -329,8 +354,27 @@ static void MX_RTC_Init(void)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN RTC_Init 2 */
+  /* USER CODE BEGIN RTC_ShowTime */
+  void RTC_ShowTime(void)
+  {
+	  RTC_TimeTypeDef sTime;
+	  RTC_DateTypeDef sDate;
 
+	  //1)Get time
+	  HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+	  //2)Get data
+	  HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+
+
+
+	  /*char ShowTime[0]= sTime.Hours;
+	   *  char *strcat(char *s1, const char *s2);
+	  char ShowTime[0]= {(char)sTime.Hours};
+	  char ShowTime[1]= ":";
+	  char ShowTime[2]= {(char)sTime.Minutes};
+
+	,sTime.Hours,":",sTime.Minutes;*/
+  }
   /* USER CODE END RTC_Init 2 */
 
 }
