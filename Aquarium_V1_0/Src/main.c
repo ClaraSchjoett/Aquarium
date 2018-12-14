@@ -143,10 +143,6 @@ int main(void)
   /* USER CODE BEGIN 2 */
    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
 
-  lcd_init();
-
-
-  lcd_send_string("hallo");
 
   /* USER CODE END 2 */
 
@@ -157,14 +153,11 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  uint8_t pData;
-	  pData = 0x0F;
 
-	  HAL_I2C_Master_Transmit(&hi2c1, 0x4E, &pData, 1, 10);
+	  lcd_init();
 
-	  pData = 0x0C;
-
-	  HAL_I2C_Master_Transmit(&hi2c1, 0x4E, &pData, 1, 10);
+	  print_text();
+	  HAL_Delay(2000);
 
 	set_RGB(25,0,0);
 	HAL_Delay(1000);
@@ -311,13 +304,13 @@ static void MX_I2C1_Init(void)
 	char  time[5];
 	time[] = "%d:&d", myTime.hours, myTime.minutes;
   	lcd_send_cmd(0x0D);
-  	lcd_send_string(&time[]);
+  	lcd_send_string(&time[5]);
 
   	lcd_send_cmd(0x36);
-  	lcd_send_string("%d",&time_am);
+  	lcd_send_string(&time_am);
 
   	lcd_send_cmd(0x4A);
-  	lcd_send_string("%d",&time_pm);
+  	lcd_send_string(&time_pm);
   }
 
   /* USER CODE END I2C1_Init 2 */
