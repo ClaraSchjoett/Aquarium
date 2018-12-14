@@ -2,6 +2,7 @@
 /** Put this in the src folder **/
 
 #include "i2c-lcd.h"
+#include <string.h>
 extern I2C_HandleTypeDef hi2c1;  // change your handler here accordingly
 
 #define SLAVE_ADDRESS_LCD 0x4E // change this according to ur setup
@@ -72,4 +73,52 @@ void cursor_shift_left(void)
 void cursor_shift_right(void)
 {
 	lcd_send_cmd (0x14);
+}
+
+//Shift cursor n-mal nach links
+void cursor_shift_left_ntime(uint8_t number)
+{
+	for(int i = 0 ; i < number ; i++)
+		{
+			cursor_shift_left();
+		}
+}
+
+//Shift cursor n-mal nach rechts
+void cursor_shift_right_ntime(uint8_t number)
+{
+	for(int i = 0 ; i < number ; i++)
+		{
+			cursor_shift_right();
+		}
+}
+
+//Lösche die ganze Zeile
+void delete_row (uint8_t row)
+{
+	char *delete_me[20];
+	memset(delete_me,0,20);				//Lösche alles im Array
+
+	cursor_jumpto_r_c ( row, 0);
+	lcd_send_string (&delete_me);		// überschreibe mit leerem String
+	cursor_jumpto_r_c ( row, 0);		// Springe zur ersten Stelle der Zeile zurück
+}
+
+//Lösche das aktuelle Zeichen
+void delete_current_char(void)
+{
+	char delete_me= '\0';
+	cursor_shift_left();
+	lcd_send_data (delete_me);			// überschreibe mit leerem Char
+	cursor_shift_left();
+}
+
+void delete_some_chars (uint8_t number)
+{
+	char *delete_me[number];
+	memset(delete_me,0,number);
+
+	cursor_shift_left_ntime(number);
+	lcd_send_string (&delete_me);		// überschreibe mit leerem String
+	cursor_shift_left_ntime(number);	// laufe mit dem Cursor zurück
 }

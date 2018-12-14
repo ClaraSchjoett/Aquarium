@@ -3,7 +3,7 @@ Archive member included to satisfy reference by file (symbol)
 c:/program files (x86)/atollic/truestudio for stm32 9.0.1/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/../../../../arm-atollic-eabi/lib/armv7e-m/fpu\libc_nano.a(lib_a-init.o)
                               startup\startup_stm32f446xx.o (__libc_init_array)
 c:/program files (x86)/atollic/truestudio for stm32 9.0.1/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/../../../../arm-atollic-eabi/lib/armv7e-m/fpu\libc_nano.a(lib_a-memset.o)
-                              Src\main.o (memset)
+                              Src\i2c-lcd.o (memset)
 c:/program files (x86)/atollic/truestudio for stm32 9.0.1/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/armv7e-m/fpu\libgcc.a(_aeabi_uldivmod.o)
                               Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc.o (__aeabi_uldivmod)
 c:/program files (x86)/atollic/truestudio for stm32 9.0.1/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/armv7e-m/fpu\libgcc.a(_udivmoddi4.o)
@@ -998,6 +998,16 @@ Discarded input sections
                 0x00000000        0x6 Src\i2c-lcd.o
  .text.cursor_shift_right
                 0x00000000        0x6 Src\i2c-lcd.o
+ .text.cursor_shift_left_ntime
+                0x00000000       0x14 Src\i2c-lcd.o
+ .text.cursor_shift_right_ntime
+                0x00000000       0x14 Src\i2c-lcd.o
+ .text.delete_row
+                0x00000000       0x2a Src\i2c-lcd.o
+ .text.delete_current_char
+                0x00000000       0x14 Src\i2c-lcd.o
+ .text.delete_some_chars
+                0x00000000       0x32 Src\i2c-lcd.o
  .text          0x00000000        0x0 Src\main.o
  .data          0x00000000        0x0 Src\main.o
  .bss           0x00000000        0x0 Src\main.o
@@ -1635,7 +1645,7 @@ LOAD c:/program files (x86)/atollic/truestudio for stm32 9.0.1/armtools/bin/../l
                 0x000004e7       0x22 c:/program files (x86)/atollic/truestudio for stm32 9.0.1/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/armv7e-m/fpu/crtn.o
 OUTPUT(Aquarium_V1_0.elf elf32-littlearm)
 
-.debug_info     0x00000000    0x1b27c
+.debug_info     0x00000000    0x1b49e
  .debug_info    0x00000000     0x123e Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.o
  .debug_info    0x0000123e     0x1762 Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cortex.o
  .debug_info    0x000029a0      0xfd6 Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_gpio.o
@@ -1647,14 +1657,14 @@ OUTPUT(Aquarium_V1_0.elf elf32-littlearm)
  .debug_info    0x0000c6d7     0x3ba2 Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.o
  .debug_info    0x00010279     0x19a5 Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim_ex.o
  .debug_info    0x00011c1e     0x1ea3 Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_uart.o
- .debug_info    0x00013ac1     0x105a Src\i2c-lcd.o
- .debug_info    0x00014b1b     0x2c37 Src\main.o
- .debug_info    0x00017752     0x1f1e Src\stm32f4xx_hal_msp.o
- .debug_info    0x00019670      0xe32 Src\stm32f4xx_it.o
- .debug_info    0x0001a4a2      0xd50 Src\system_stm32f4xx.o
- .debug_info    0x0001b1f2       0x8a startup\startup_stm32f446xx.o
+ .debug_info    0x00013ac1     0x127c Src\i2c-lcd.o
+ .debug_info    0x00014d3d     0x2c37 Src\main.o
+ .debug_info    0x00017974     0x1f1e Src\stm32f4xx_hal_msp.o
+ .debug_info    0x00019892      0xe32 Src\stm32f4xx_it.o
+ .debug_info    0x0001a6c4      0xd50 Src\system_stm32f4xx.o
+ .debug_info    0x0001b414       0x8a startup\startup_stm32f446xx.o
 
-.debug_abbrev   0x00000000     0x2f22
+.debug_abbrev   0x00000000     0x2f68
  .debug_abbrev  0x00000000      0x308 Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.o
  .debug_abbrev  0x00000308      0x399 Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cortex.o
  .debug_abbrev  0x000006a1      0x268 Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_gpio.o
@@ -1666,14 +1676,14 @@ OUTPUT(Aquarium_V1_0.elf elf32-littlearm)
  .debug_abbrev  0x00001862      0x3ac Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.o
  .debug_abbrev  0x00001c0e      0x300 Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim_ex.o
  .debug_abbrev  0x00001f0e      0x397 Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_uart.o
- .debug_abbrev  0x000022a5      0x237 Src\i2c-lcd.o
- .debug_abbrev  0x000024dc      0x35e Src\main.o
- .debug_abbrev  0x0000283a      0x2b4 Src\stm32f4xx_hal_msp.o
- .debug_abbrev  0x00002aee      0x258 Src\stm32f4xx_it.o
- .debug_abbrev  0x00002d46      0x1ca Src\system_stm32f4xx.o
- .debug_abbrev  0x00002f10       0x12 startup\startup_stm32f446xx.o
+ .debug_abbrev  0x000022a5      0x27d Src\i2c-lcd.o
+ .debug_abbrev  0x00002522      0x35e Src\main.o
+ .debug_abbrev  0x00002880      0x2b4 Src\stm32f4xx_hal_msp.o
+ .debug_abbrev  0x00002b34      0x258 Src\stm32f4xx_it.o
+ .debug_abbrev  0x00002d8c      0x1ca Src\system_stm32f4xx.o
+ .debug_abbrev  0x00002f56       0x12 startup\startup_stm32f446xx.o
 
-.debug_loc      0x00000000     0xa7a3
+.debug_loc      0x00000000     0xa8a6
  .debug_loc     0x00000000      0x11b Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.o
  .debug_loc     0x0000011b      0x4fb Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cortex.o
  .debug_loc     0x00000616      0x3cd Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_gpio.o
@@ -1685,12 +1695,12 @@ OUTPUT(Aquarium_V1_0.elf elf32-littlearm)
  .debug_loc     0x00005692     0x30b2 Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.o
  .debug_loc     0x00008744      0x84a Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim_ex.o
  .debug_loc     0x00008f8e     0x132c Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_uart.o
- .debug_loc     0x0000a2ba      0x152 Src\i2c-lcd.o
- .debug_loc     0x0000a40c      0x155 Src\main.o
- .debug_loc     0x0000a561      0x126 Src\stm32f4xx_hal_msp.o
- .debug_loc     0x0000a687      0x11c Src\system_stm32f4xx.o
+ .debug_loc     0x0000a2ba      0x255 Src\i2c-lcd.o
+ .debug_loc     0x0000a50f      0x155 Src\main.o
+ .debug_loc     0x0000a664      0x126 Src\stm32f4xx_hal_msp.o
+ .debug_loc     0x0000a78a      0x11c Src\system_stm32f4xx.o
 
-.debug_aranges  0x00000000      0xca0
+.debug_aranges  0x00000000      0xcc8
  .debug_aranges
                 0x00000000       0xd8 Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.o
  .debug_aranges
@@ -1714,19 +1724,19 @@ OUTPUT(Aquarium_V1_0.elf elf32-littlearm)
  .debug_aranges
                 0x00000960      0x170 Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_uart.o
  .debug_aranges
-                0x00000ad0       0x50 Src\i2c-lcd.o
+                0x00000ad0       0x78 Src\i2c-lcd.o
  .debug_aranges
-                0x00000b20       0x60 Src\main.o
+                0x00000b48       0x60 Src\main.o
  .debug_aranges
-                0x00000b80       0x68 Src\stm32f4xx_hal_msp.o
+                0x00000ba8       0x68 Src\stm32f4xx_hal_msp.o
  .debug_aranges
-                0x00000be8       0x68 Src\stm32f4xx_it.o
+                0x00000c10       0x68 Src\stm32f4xx_it.o
  .debug_aranges
-                0x00000c50       0x28 Src\system_stm32f4xx.o
+                0x00000c78       0x28 Src\system_stm32f4xx.o
  .debug_aranges
-                0x00000c78       0x28 startup\startup_stm32f446xx.o
+                0x00000ca0       0x28 startup\startup_stm32f446xx.o
 
-.debug_ranges   0x00000000     0x10d0
+.debug_ranges   0x00000000     0x1128
  .debug_ranges  0x00000000       0xc8 Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.o
  .debug_ranges  0x000000c8      0x138 Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cortex.o
  .debug_ranges  0x00000200       0x68 Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_gpio.o
@@ -1738,14 +1748,14 @@ OUTPUT(Aquarium_V1_0.elf elf32-littlearm)
  .debug_ranges  0x00000888      0x330 Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.o
  .debug_ranges  0x00000bb8       0xe0 Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim_ex.o
  .debug_ranges  0x00000c98      0x178 Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_uart.o
- .debug_ranges  0x00000e10       0x40 Src\i2c-lcd.o
- .debug_ranges  0x00000e50      0x120 Src\main.o
- .debug_ranges  0x00000f70       0xd0 Src\stm32f4xx_hal_msp.o
- .debug_ranges  0x00001040       0x58 Src\stm32f4xx_it.o
- .debug_ranges  0x00001098       0x18 Src\system_stm32f4xx.o
- .debug_ranges  0x000010b0       0x20 startup\startup_stm32f446xx.o
+ .debug_ranges  0x00000e10       0x98 Src\i2c-lcd.o
+ .debug_ranges  0x00000ea8      0x120 Src\main.o
+ .debug_ranges  0x00000fc8       0xd0 Src\stm32f4xx_hal_msp.o
+ .debug_ranges  0x00001098       0x58 Src\stm32f4xx_it.o
+ .debug_ranges  0x000010f0       0x18 Src\system_stm32f4xx.o
+ .debug_ranges  0x00001108       0x20 startup\startup_stm32f446xx.o
 
-.debug_line     0x00000000     0x7b3a
+.debug_line     0x00000000     0x7bc7
  .debug_line    0x00000000      0x492 Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.o
  .debug_line    0x00000492      0x4dc Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cortex.o
  .debug_line    0x0000096e      0x475 Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_gpio.o
@@ -1757,14 +1767,14 @@ OUTPUT(Aquarium_V1_0.elf elf32-littlearm)
  .debug_line    0x00004396     0x117f Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.o
  .debug_line    0x00005515      0x6cb Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim_ex.o
  .debug_line    0x00005be0      0xbef Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_uart.o
- .debug_line    0x000067cf      0x330 Src\i2c-lcd.o
- .debug_line    0x00006aff      0x599 Src\main.o
- .debug_line    0x00007098      0x454 Src\stm32f4xx_hal_msp.o
- .debug_line    0x000074ec      0x35a Src\stm32f4xx_it.o
- .debug_line    0x00007846      0x275 Src\system_stm32f4xx.o
- .debug_line    0x00007abb       0x7f startup\startup_stm32f446xx.o
+ .debug_line    0x000067cf      0x3bd Src\i2c-lcd.o
+ .debug_line    0x00006b8c      0x599 Src\main.o
+ .debug_line    0x00007125      0x454 Src\stm32f4xx_hal_msp.o
+ .debug_line    0x00007579      0x35a Src\stm32f4xx_it.o
+ .debug_line    0x000078d3      0x275 Src\system_stm32f4xx.o
+ .debug_line    0x00007b48       0x7f startup\startup_stm32f446xx.o
 
-.debug_str      0x00000000     0x4fa6
+.debug_str      0x00000000     0x5019
  .debug_str     0x00000000      0xf6c Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.o
                                0x1032 (size before relaxing)
  .debug_str     0x00000f6c      0x3ca Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cortex.o
@@ -1787,15 +1797,15 @@ OUTPUT(Aquarium_V1_0.elf elf32-littlearm)
                                0x10fe (size before relaxing)
  .debug_str     0x000045b4      0x6b9 Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_uart.o
                                0x107b (size before relaxing)
- .debug_str     0x00004c6d       0xa4 Src\i2c-lcd.o
-                                0xbdc (size before relaxing)
- .debug_str     0x00004d11      0x138 Src\main.o
+ .debug_str     0x00004c6d      0x11e Src\i2c-lcd.o
+                                0xc56 (size before relaxing)
+ .debug_str     0x00004d8b      0x131 Src\main.o
                                0x1f11 (size before relaxing)
- .debug_str     0x00004e49       0x24 Src\stm32f4xx_hal_msp.o
+ .debug_str     0x00004ebc       0x24 Src\stm32f4xx_hal_msp.o
                                0x186b (size before relaxing)
- .debug_str     0x00004e6d       0xf4 Src\stm32f4xx_it.o
+ .debug_str     0x00004ee0       0xf4 Src\stm32f4xx_it.o
                                 0x9aa (size before relaxing)
- .debug_str     0x00004f61       0x45 Src\system_stm32f4xx.o
+ .debug_str     0x00004fd4       0x45 Src\system_stm32f4xx.o
                                 0x802 (size before relaxing)
 
 .comment        0x00000000       0x7c
@@ -1817,7 +1827,7 @@ OUTPUT(Aquarium_V1_0.elf elf32-littlearm)
  .comment       0x0000007c       0x7d Src\stm32f4xx_it.o
  .comment       0x0000007c       0x7d Src\system_stm32f4xx.o
 
-.debug_frame    0x00000000     0x2730
+.debug_frame    0x00000000     0x27c8
  .debug_frame   0x00000000      0x1d0 Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.o
  .debug_frame   0x000001d0      0x158 Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cortex.o
  .debug_frame   0x00000328       0xd8 Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_gpio.o
@@ -1829,12 +1839,12 @@ OUTPUT(Aquarium_V1_0.elf elf32-littlearm)
  .debug_frame   0x00001270      0x854 Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.o
  .debug_frame   0x00001ac4      0x330 Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim_ex.o
  .debug_frame   0x00001df4      0x4a0 Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_uart.o
- .debug_frame   0x00002294       0xa4 Src\i2c-lcd.o
- .debug_frame   0x00002338      0x124 Src\main.o
- .debug_frame   0x0000245c      0x104 Src\stm32f4xx_hal_msp.o
- .debug_frame   0x00002560       0xec Src\stm32f4xx_it.o
- .debug_frame   0x0000264c       0x38 Src\system_stm32f4xx.o
- .debug_frame   0x00002684       0x2c c:/program files (x86)/atollic/truestudio for stm32 9.0.1/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/../../../../arm-atollic-eabi/lib/armv7e-m/fpu\libc_nano.a(lib_a-init.o)
- .debug_frame   0x000026b0       0x20 c:/program files (x86)/atollic/truestudio for stm32 9.0.1/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/../../../../arm-atollic-eabi/lib/armv7e-m/fpu\libc_nano.a(lib_a-memset.o)
- .debug_frame   0x000026d0       0x2c c:/program files (x86)/atollic/truestudio for stm32 9.0.1/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/armv7e-m/fpu\libgcc.a(_aeabi_uldivmod.o)
- .debug_frame   0x000026fc       0x34 c:/program files (x86)/atollic/truestudio for stm32 9.0.1/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/armv7e-m/fpu\libgcc.a(_udivmoddi4.o)
+ .debug_frame   0x00002294      0x13c Src\i2c-lcd.o
+ .debug_frame   0x000023d0      0x124 Src\main.o
+ .debug_frame   0x000024f4      0x104 Src\stm32f4xx_hal_msp.o
+ .debug_frame   0x000025f8       0xec Src\stm32f4xx_it.o
+ .debug_frame   0x000026e4       0x38 Src\system_stm32f4xx.o
+ .debug_frame   0x0000271c       0x2c c:/program files (x86)/atollic/truestudio for stm32 9.0.1/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/../../../../arm-atollic-eabi/lib/armv7e-m/fpu\libc_nano.a(lib_a-init.o)
+ .debug_frame   0x00002748       0x20 c:/program files (x86)/atollic/truestudio for stm32 9.0.1/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/../../../../arm-atollic-eabi/lib/armv7e-m/fpu\libc_nano.a(lib_a-memset.o)
+ .debug_frame   0x00002768       0x2c c:/program files (x86)/atollic/truestudio for stm32 9.0.1/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/armv7e-m/fpu\libgcc.a(_aeabi_uldivmod.o)
+ .debug_frame   0x00002794       0x34 c:/program files (x86)/atollic/truestudio for stm32 9.0.1/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/armv7e-m/fpu\libgcc.a(_udivmoddi4.o)
