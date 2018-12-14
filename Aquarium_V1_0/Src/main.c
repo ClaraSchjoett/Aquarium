@@ -261,6 +261,10 @@ static void MX_I2C1_Init(void)
 }
   /* USER CODE BEGIN I2C1_Init 2 */
 
+	/* Funktion soll den Pfeil auf dem display ausgeben an der Position di vom Rotary
+	 * gewünscht wird. Dazu braucht sie die Postion (linenumber). Sie giebt je nach
+	 * zeilenumer 1, 2 oder  3 den Pfeil im 2 und 3 Feld  auf der 1. 3. oder 4. Zeile aus.*/
+
   void print_cursor (int linenumber)
   {
   	switch(linenumber){
@@ -270,12 +274,17 @@ static void MX_I2C1_Init(void)
   		case 2: lcd_send_cmd(0x29);
   				lcd_send_string("->");
   		break;
-  		case 2: lcd_send_cmd(0x3D);
+  		case 3: lcd_send_cmd(0x3D);
   				lcd_send_string("->");
   		break;
   		}
 
   }
+
+  /* Gibt den Text aus der ändert sich nicht daher braucht sie keine eübergabewerte
+   * Time ist die Aktuelle Uhrzeit
+   * Start_AM soll der Text sein für den Start des Sonnenaufgang
+   * Start_PM soll der Text sein für den Start des Sonnenuntergang */
 
   void print_text (void)
   {
@@ -288,6 +297,14 @@ static void MX_I2C1_Init(void)
   	lcd_send_cmd(0x40);
   	lcd_send_string("START_PM");
   }
+
+  /* Mit dieser Funktion soll die Aktuelle, die Startzeit für den Aufgang und Untergang
+   * ausgegeben werden.
+   * Sie braucht:
+   *  -Aktuelle stunde
+   *  -Aktuelle Minute
+   *  -Eingestellte Startzeit Morgen (time_am)
+   *  -Eingestellte Startzeit Abend (time_pm)*/
 
   void print_time (int myTime.hours, int myTime.minutes, char *time_am[], char time_pm[])
   {
