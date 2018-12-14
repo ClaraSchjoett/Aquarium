@@ -92,10 +92,7 @@ static void MX_TIM8_Init(int duty);
 static void MX_TIM2_Init(int brightness);
 void set_FL(int brightness);//set brightness of the FL light
 void set_RGB(int red, int green, int blue); //set RGB value for led strip
-//void lcd_send_string (char *str);
-//void lcd_init (void);
-//void lcd_send_data (char data);
-//void lcd_send_cmd (char cmd);
+
 
 /* USER CODE END PFP */
 
