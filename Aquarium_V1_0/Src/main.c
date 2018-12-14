@@ -44,6 +44,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "i2c-lcd.h"
+#include "stdio.h"
 
 /* USER CODE END Includes */
 
@@ -93,6 +94,9 @@ static void MX_TIM2_Init(int brightness);
 void set_FL(int brightness);//set brightness of the FL light
 void set_RGB(int red, int green, int blue); //set RGB value for led strip
 
+void print_time (char time, char time_am, char time_pm);
+void print_text (void);
+void print_cursor (int linenumber);
 
 /* USER CODE END PFP */
 
@@ -141,7 +145,8 @@ int main(void)
 
   lcd_init();
 
-  lcd_send_string("Hallo world");
+
+  lcd_send_string("hallo");
 
   /* USER CODE END 2 */
 
@@ -252,16 +257,55 @@ static void MX_I2C1_Init(void)
   {
     Error_Handler();
   }
+
+}
   /* USER CODE BEGIN I2C1_Init 2 */
 
-void text_to_lcd (int linenumber, char text)
-{
-	// Funktion zur Textausgabe
-}
+  void print_cursor (int linenumber)
+  {
+  	switch(linenumber){
+  		case 1: lcd_send_cmd(0x81);
+  				lcd_send_string("->");
+  		break;
+  		case 2: lcd_send_cmd(0x29);
+  				lcd_send_string("->");
+  		break;
+  		case 2: lcd_send_cmd(0x3D);
+  				lcd_send_string("->");
+  		break;
+  		}
+
+  }
+
+  void print_text (void)
+  {
+  	lcd_send_cmd(0x04);
+  	lcd_send_string("TIME");
+
+  	lcd_send_cmd(0x2C);
+  	lcd_send_string("START_AM");
+
+  	lcd_send_cmd(0x40);
+  	lcd_send_string("START_PM");
+  }
+
+  void print_time (int myTime.hours, int myTime.minutes, char *time_am[], char time_pm[])
+  {
+	char  time[5];
+	time[] = "%d:&d", myTime.hours, myTime.minutes;
+  	lcd_send_cmd(0x0D);
+  	lcd_send_string(&time[]);
+
+  	lcd_send_cmd(0x36);
+  	lcd_send_string("%d",&time_am);
+
+  	lcd_send_cmd(0x4A);
+  	lcd_send_string("%d",&time_pm);
+  }
 
   /* USER CODE END I2C1_Init 2 */
 
-}
+
 
 /**
   * @brief RTC Initialization Function
