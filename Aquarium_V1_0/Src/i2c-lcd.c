@@ -44,3 +44,32 @@ void lcd_send_string (char *str)
 {
 	while (*str) lcd_send_data (*str++);
 }
+
+// Spring mit Cursor zur Reihe und Spalte
+void cursor_jumpto_r_c (uint8_t row, uint8_t column)
+{
+	uint8_t mycmd;
+	switch(row){
+		case 1: mycmd = 0x80;break;		// MSB=1, Bits 6-0 = AC: 1-000 0000
+
+		case 2: mycmd = 0x94;break;		// 1-001 0100
+
+		case 3: mycmd = 0xA8;break;		// 1-010 1000
+
+		case 4: mycmd = 0xBC;break;		// 1-011 1100
+	}
+	mycmd+=column;
+	lcd_send_cmd (mycmd);
+}
+
+// Shift cursor einmal nach links
+void cursor_shift_left(void)
+{
+	lcd_send_cmd (0x10);
+}
+
+// Shift cursor einmal nach rechts
+void cursor_shift_right(void)
+{
+	lcd_send_cmd (0x14);
+}
