@@ -113,6 +113,7 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -144,9 +145,10 @@ int main(void)
   // NOT MY CODE - > HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
 
   //Int LCD
+
   lcd_init();
   HAL_Delay(50);
-
+  lcd_send_string("Hallo welt ");
 
   /* USER CODE END 2 */
 
@@ -157,14 +159,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  uint8_t pData;
-	  pData = 0x0F;
 
-	  HAL_I2C_Master_Transmit(&hi2c1, 0x4E, &pData, 1, 10);
-
-	  pData = 0x0C;
-
-	  HAL_I2C_Master_Transmit(&hi2c1, 0x4E, &pData, 1, 10);
 
 	set_RGB(25,0,0);
 	HAL_Delay(1000);
@@ -259,12 +254,7 @@ static void MX_I2C1_Init(void)
   }
   /* USER CODE BEGIN I2C1_Init 2 */
 
-void text_to_lcd (int linenumber, char text)
-{
-	// Funktion zur Textausgabe
-}
 
-  /* USER CODE END I2C1_Init 2 */
 
 }
 
