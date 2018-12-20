@@ -73,7 +73,7 @@
 /* External variables --------------------------------------------------------*/
 extern RTC_HandleTypeDef hrtc;
 /* USER CODE BEGIN EV */
-extern int *pflag;
+extern int *pReason;
 
 extern GPIO_PinState *pstateA;
 extern GPIO_PinState *ppreviousA;
@@ -222,8 +222,7 @@ void SysTick_Handler(void)
 void EXTI1_IRQHandler(void)
 {
 	/* USER CODE BEGIN EXTI1_IRQn 0 */
-	*pflag = 1;
-
+	*pReason = 1;
 	/* USER CODE END EXTI1_IRQn 0 */
 	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
 	/* USER CODE BEGIN EXTI1_IRQn 1 */
@@ -237,14 +236,26 @@ void EXTI1_IRQHandler(void)
 void EXTI9_5_IRQHandler(void)
 {
 	/* USER CODE BEGIN EXTI9_5_IRQn 0 */
-	*pstateA = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_8);
-	//if(__HAL_GPIO_EXTI_GET_FLAG(GPIO_PIN_8)){
-	if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_9) != *pstateA){
-		*pflag = 2;
-	} else {
-		*pflag = 3;
+
+	/* USER CODE BEGIN EXTI9_5_IRQn 0 */
+	if(__HAL_GPIO_EXTI_GET_FLAG(GPIO_PIN_8)){
+		*pReason = 2;
 	}
-	*ppreviousA = *pstateA;
+
+	if(__HAL_GPIO_EXTI_GET_FLAG(GPIO_PIN_9)){
+		*pReason = 3;
+	}
+	/* USER CODE END EXTI9_5_IRQn 0 */
+
+
+//	*pstateA = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_8);
+//	//if(__HAL_GPIO_EXTI_GET_FLAG(GPIO_PIN_8)){
+//	if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_9) != *pstateA){
+//		*pReason = 2;
+//	} else {
+//		*pReason = 3;
+//	}
+//	*ppreviousA = *pstateA;
 	//TODO what happens when the rotary encoder is turned and pulls potential of this pin to ground?
 	//TODO check for set flag in main (polling) and call menu function if flag is set
 	//}
@@ -253,7 +264,7 @@ void EXTI9_5_IRQHandler(void)
 	  if ((HAL_GPIO_ReadPin(GPIO_PIN_9) != *ppreviousB) && (HAL_GPIO_ReadPin(GPIO_PIN_8) == *ppreviousA)){
 	  //TODO what happens when the rotary encoder is turned and pulls potential of this pin to ground?
 	  //TODO check for set flag in main (polling) and call menu function if flag is set
-	 *pflag = 3;
+	 *pReason = 3;
 	  }
   }*/
 	/* USER CODE END EXTI9_5_IRQn 0 */

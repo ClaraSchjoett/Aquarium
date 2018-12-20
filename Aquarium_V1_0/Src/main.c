@@ -79,14 +79,16 @@ TIM_HandleTypeDef htim8;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-int flag = 0;			// Interrupt reason: 0 = button, 1 = rotary channel a; 2 = rotary channel b.
-int *pflag = &flag;		// Enables us to access variable flag in other source files.
+int interruptReason = 0;			// Interrupt reason: 1 = button, 2 = rotary channel a; 3 = rotary channel b.
+int *pReason = &interruptReason;		// Enables us to access variable flag in other source files.
 
 GPIO_PinState stateA;
 GPIO_PinState previousA;
 GPIO_PinState *pstateA = &stateA;
 GPIO_PinState *ppreviousA = &previousA;
 
+uint8_t counter = 0;
+uint8_t display_timer;
 
 /* USER CODE END PV */
 
@@ -122,7 +124,7 @@ void set_RGB(int red, int green, int blue); //set RGB value for led strip
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	uint8_t testcounter = 32;
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -151,9 +153,14 @@ int main(void)
   MX_TIM2_Init(0);
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
+
+  // This line turns the on-board LED2 on. Only for test purpose. Delete eventually.
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+
+  // This line reads the state of channel A
   previousA = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_8);
   /* USER CODE END 2 */
+
   //Set time, data and alarm
   	//1) Set time
   	myTime.Hours = 12;
@@ -177,33 +184,42 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  if(GPIO_PIN_SET == HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_1)){
+		  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);	// Toggles the onboard LED "LD2" to show program is running
+	  }
 
-//	set_RGB(25,0,0);
-//	HAL_Delay(1000);
-//	set_RGB(75,0,0);
-//	HAL_Delay(1000);
-//	set_RGB(100,0,0);
-//	HAL_Delay(1000);
+	switch (*pReason) {	 		// Interrupt triggers menu display and enables navigation
+		case 1:
+			display_timer = myTime.Minutes; // Set timer to current time
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET); // Turn on LED ring on button
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET); // Turn on display
+			// TODO start menu navigation
+			while(GPIO_PIN_RESET == HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_1)){
+				counter++;
+			}
+			break;
+		case 2:	// Channel A, CW turning direction
+			display_timer = myTime.Minutes; // Set timer to current time
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET); // Turn on LED ring on button
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET); // Turn on display
+			// TODO start menu navigation
 
-	switch (*pflag) {	 		// Interrupt triggers menu display and enables navigation
-	case 1:
-		// TODO start countdown LCD illuminance timer
-		// TODO start menu navigation
-		testcounter = testcounter + 4;
-		break;
-	case 2:
-		// TODO start countdown LCD illuminance timer
-		// TODO start menu navigation
-		testcounter++;
-		break;
-	case 3:
-		// TODO start countdown LCD illuminance timer
-		// TODO start menu navigation
-		testcounter--;
-		break;
+			break;
+		case 3:	// Channel B, CCW turning direction
+			display_timer = myTime.Minutes; // Set timer to current time
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET); // Turn on LED ring on button
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET); // Turn on display
+			// TODO start menu navigation
+			break;
 
 	}
-	*pflag = 0;
+
+	*pReason = 0;
+	RTC_get_Time_and_Date();
+	if(display_timer != myTime.Minutes){
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET); // Turn off LED ring on button
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET); // Turn off display
+	}
 
   }
   /* USER CODE END 3 */
@@ -650,7 +666,7 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : B1_Pin */
+  /*Configure GPIO pin : B1_Pin.  */
   GPIO_InitStruct.Pin = B1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
