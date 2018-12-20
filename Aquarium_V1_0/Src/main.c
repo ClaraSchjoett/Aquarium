@@ -84,8 +84,7 @@ int *pflag = &flag;		// Enables us to access variable flag in other source files
 
 int sunset_timer=0;
 int sunrise_timer=0;
-//int sunset_sec_counter=0;
-//int sunrise_sec_counter=0;
+
 int red_counter=0;
 int green_counter=0;
 int blue_counter=0;
@@ -112,7 +111,10 @@ void RTC_get_Time_and_Date(void);
 static void MX_TIM2_Init(int brightness);
 void set_FL(int brightness);//set brightness of the FL light
 void set_RGB(int red, int green, int blue); //set RGB value for led strip
-
+void sunrise(void);
+void sunset(void);
+void LED_Dimm_Up(void);
+void LED_Dimm_Down(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -184,34 +186,9 @@ int main(void)
     /* USER CODE BEGIN 3 */
 
 
-	RTC_get_Time_and_Date();
-	if((red<=100) && (green<=100) && (blue<=100))
-	{
-		if(sunrise_timer<myTime.Seconds)
-		{
-			red_counter++;
-			green_counter++;
-			blue_counter++;
-			if(red_counter>=1)
-			{
-				red_counter=0;
-				red++;
-			}
-			if(green_counter>=2)
-			{
-				green_counter=0;
-				green++;
-			}
-			if(blue_counter>=20)
-			{
-				blue_counter=0;
-				blue++;
-			}
-			set_RGB(red,green,blue);
-		}
-		sunrise_timer=myTime.Seconds;
-	}
-
+	  //sunrise();
+	  //LED_Dimm_Up();
+	  set_RGB(1000,10,0);
 
 
 
@@ -245,6 +222,60 @@ int main(void)
   }
   /* USER CODE END 3 */
 }
+void set_RGB(int red, int green, int blue)
+{
+	MX_TIM4_Init(red);
+	MX_TIM3_Init(green);
+	MX_TIM8_Init(blue);
+}
+
+void sunrise(void)
+{
+	RTC_get_Time_and_Date();
+	if((red<=1000) && (green<=1000) && (blue<=1000))
+	{
+		if(sunrise_timer<myTime.Seconds)
+		{
+			red=red+25;
+			green=green+8;
+			blue=blue+1;
+			set_RGB(red,green,blue);
+		}
+		sunrise_timer=myTime.Seconds;
+	}
+}
+
+void sunset(void)
+{
+	RTC_get_Time_and_Date();
+	if((red>=1) && (green>=1) && (blue>=1))
+	{
+		if(sunrise_timer<myTime.Seconds)
+		{
+			red=red+25;
+			green=green+8;
+			blue=blue+1;
+			set_RGB(red,green,blue);
+		}
+		sunrise_timer=myTime.Seconds;
+	}
+}
+void LED_Dimm_Up(void)
+{
+	RTC_get_Time_and_Date();
+	if((red<=1000) && (green<=1000) && (blue<=1000))
+	{
+		if(sunrise_timer<myTime.Seconds)
+		{
+			red=red+10;
+			green=green+3;
+			//blue=blue+1;
+			set_RGB(red,green,blue);
+		}
+		sunrise_timer=myTime.Seconds;
+	}
+}
+
 
 
 
@@ -258,8 +289,6 @@ void RTC_get_Time_and_Date(void)
 
 }
 /* USER CODE END RTC_Init 2 */
-
-
 
 /**
   * @brief System Clock Configuration
@@ -444,9 +473,9 @@ static void MX_TIM2_Init(int brightness)
 
   /* USER CODE END TIM2_Init 1 */
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 0;
+  htim2.Init.Prescaler = 84;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 0;
+  htim2.Init.Period = 1000;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   if (HAL_TIM_PWM_Init(&htim2) != HAL_OK)
   {
@@ -492,9 +521,9 @@ static void MX_TIM3_Init(int duty)
 
   /* USER CODE END TIM3_Init 1 */
   htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 840;
+  htim3.Init.Prescaler = 84;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 100;
+  htim3.Init.Period = 1000;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   if (HAL_TIM_PWM_Init(&htim3) != HAL_OK)
   {
@@ -540,9 +569,9 @@ static void MX_TIM4_Init(int duty)
 
   /* USER CODE END TIM4_Init 1 */
   htim4.Instance = TIM4;
-  htim4.Init.Prescaler = 840;
+  htim4.Init.Prescaler = 84;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim4.Init.Period = 100;
+  htim4.Init.Period = 1000;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   if (HAL_TIM_PWM_Init(&htim4) != HAL_OK)
   {
@@ -589,9 +618,9 @@ static void MX_TIM8_Init(int duty)
 
   /* USER CODE END TIM8_Init 1 */
   htim8.Instance = TIM8;
-  htim8.Init.Prescaler = 840;
+  htim8.Init.Prescaler = 84;
   htim8.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim8.Init.Period = 100;
+  htim8.Init.Period = 1000;
   htim8.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim8.Init.RepetitionCounter = 0;
   if (HAL_TIM_PWM_Init(&htim8) != HAL_OK)
@@ -732,12 +761,7 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void set_RGB(int red, int green, int blue)
-{
-	MX_TIM4_Init(red);
-	MX_TIM3_Init(green);
-	MX_TIM8_Init(blue);
-}
+
 
 void set_FL(int brightness)
 {
