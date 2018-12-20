@@ -1,0 +1,11 @@
+main.c:501:13:MX_TIM4_Init	56	static
+main.c:453:13:MX_TIM3_Init	56	static
+main.c:405:13:MX_TIM2_Init	56	static
+main.c:549:13:MX_TIM8_Init	80	static
+main.c:177:6:SystemClock_Config	192	static
+main.c:261:8:print_cursor	8	static
+main.c:282:8:print_text	8	static
+main.c:707:6:set_RGB	16	static
+main.c:112:5:main	88	static
+main.c:714:6:set_FL	0	static
+main.c:727:6:Error_Handler	0	static

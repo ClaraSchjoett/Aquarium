@@ -147,7 +147,7 @@ int main(void)
 
    lcd_send_string("hello world");
 
-   HAL_I2C_Master_Transmit(&hi2c1, 0x4F, 0x01, 1, 10);
+   //HAL_I2C_Master_Transmit(&hi2c1, 0x4F, 0x01, 1, 10);
 
   /* USER CODE END 2 */
 

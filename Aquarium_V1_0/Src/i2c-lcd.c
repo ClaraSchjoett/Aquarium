@@ -30,19 +30,12 @@ void lcd_send_data (char data)
 	HAL_I2C_Master_Transmit (&hi2c1, SLAVE_ADDRESS_LCD,(uint8_t *) data_t, 4, 100);
 }
 
-void lcd_init (void)
-{
-	lcd_send_cmd (0x02);
-	lcd_send_cmd (0x28);
-	lcd_send_cmd (0x0c);
-	lcd_send_cmd (0x80);
-}
-/*
+
 void lcd_init (void)
 {
 uint8_t i=0;
 HAL_Delay(100);
-for(i=0;i<3;i++)//sending 3 times: select 4-bit mode
+for(i=0;i<3;i++)  //sending 3 times: select 4-bit mode
 {
 lcd_send_cmd(0x03);
 HAL_Delay(45);
@@ -56,7 +49,7 @@ HAL_Delay(1);
 lcd_send_cmd (0x80);
 HAL_Delay(1);
 }
-*/
+
 void lcd_send_string (char *str)
 {
 	while (*str) lcd_send_data (*str++);
