@@ -1,6 +1,7 @@
 
 #include "i2c-lcd.h"
-extern I2C_HandleTypeDef hi2c1;  // I2C Handler
+#include <string.h>
+extern I2C_HandleTypeDef hi2c1;  // change your handler here accordingly
 
 #define SLAVE_ADDRESS_LCD 0x4E // I2C Module adress
 
@@ -53,4 +54,95 @@ HAL_Delay(1);
 void lcd_send_string (char *str)
 {
 	while (*str) lcd_send_data (*str++);
+}
+
+// Spring mit Cursor zur Reihe und Spalte
+void cursor_jumpto_r_c (uint8_t row, uint8_t column)
+{
+	uint8_t mycmd;
+	switch(row){
+		case 1: mycmd = 0x80;break;		// MSB=1, Bits 6-0 = AC: 1-000 0000
+
+		case 2: mycmd = 0x94;break;		// 1-001 0100
+
+		case 3: mycmd = 0xA8;break;		// 1-010 1000
+
+		case 4: mycmd = 0xBC;break;		// 1-011 1100
+	}
+	mycmd += column;
+	lcd_send_cmd (mycmd);
+}
+
+// Shift cursor einmal nach links
+void cursor_shift_left(void)
+{
+	lcd_send_cmd (0x10);
+}
+
+// Shift cursor einmal nach rechts
+void cursor_shift_right(void)
+{
+	lcd_send_cmd (0x14);
+}
+
+//Shift cursor n-mal nach links
+void cursor_shift_left_ntime(uint8_t number)
+{
+	for(int i = 0 ; i < number ; i++)
+		{
+			cursor_shift_left();
+		}
+}
+
+//Shift cursor n-mal nach rechts
+void cursor_shift_right_ntime(uint8_t number)
+{
+	for(int i = 0 ; i < number ; i++)
+		{
+			cursor_shift_right();
+		}
+}
+
+//L�sche die ganze Zeile
+void delete_row (uint8_t row)
+{
+	char *delete_me[20];
+	memset(delete_me,0,20);				//L�sche alles im Array
+
+	cursor_jumpto_r_c ( row, 0);
+	lcd_send_string (&delete_me);		// �berschreibe mit leerem String
+	cursor_jumpto_r_c ( row, 0);		// Springe zur ersten Stelle der Zeile zur�ck
+}
+
+//L�sche das aktuelle Zeichen
+void delete_current_char(void)
+{
+	char delete_me= '\0';
+	cursor_shift_left();
+	lcd_send_data (delete_me);			// �berschreibe mit leerem Char
+	cursor_shift_left();
+}
+
+void delete_some_chars (uint8_t number)
+{
+	char *delete_me[number];
+	memset(delete_me,0,number);
+
+	cursor_shift_left_ntime(number);
+	lcd_send_string (&delete_me);		// �berschreibe mit leerem String
+	cursor_shift_left_ntime(number);	// laufe mit dem Cursor zur�ck
+}
+
+//Blinken des Cursor ON
+
+void blink_cursor_ON (void)
+{
+	lcd_send_cmd(0x0D);
+}
+
+//Blinken des Cursor OFF
+
+void blink_cursor_off(void)
+{
+	lcd_send_cmd(0x0C);
 }

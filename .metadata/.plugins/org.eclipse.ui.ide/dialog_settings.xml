@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<list key="org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage.knownSources">
+<<<<<<< HEAD
 		<item value="C:\Users\Simeon Bots\Documents\BFH\Aquarium"/>
+=======
+		<item value="C:\Users\triba\OneDrive\Desktop\Github\Aquarium\Aquarium_V1_0"/>
+>>>>>>> LCB_tri
 	</list>
 </section>

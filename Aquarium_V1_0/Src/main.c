@@ -76,6 +76,7 @@ TIM_HandleTypeDef htim8;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
+char lcd_buf[20];
 
 /* USER CODE END PV */
 
@@ -113,6 +114,8 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 
+
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -141,7 +144,7 @@ int main(void)
   MX_TIM2_Init(0);
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
-   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+  // NOT MY CODE - > HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
 
    lcd_init();
 
@@ -158,6 +161,12 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
+	  HAL_I2C_Master_Transmit(&hi2c1, 0x4E, &pData, 1, 10);
+
+	  pData = 0x0C;
+
+	  HAL_I2C_Master_Transmit(&hi2c1, 0x4E, &pData, 1, 10);
 
 	set_RGB(25,0,0);
 	HAL_Delay(1000);
@@ -255,7 +264,7 @@ static void MX_I2C1_Init(void)
   /* USER CODE BEGIN I2C1_Init 2 */
 
 	/* Funktion soll den Pfeil auf dem display ausgeben an der Position di vom Rotary
-	 * gewünscht wird. Dazu braucht sie die Postion (linenumber). Sie giebt je nach
+	 * gewï¿½nscht wird. Dazu braucht sie die Postion (linenumber). Sie giebt je nach
 	 * zeilenumer 1, 2 oder  3 den Pfeil im 2 und 3 Feld  auf der 1. 3. oder 4. Zeile aus.*/
 
   void print_cursor (int linenumber)
@@ -274,10 +283,10 @@ static void MX_I2C1_Init(void)
 
   }
 
-  /* Gibt den Text aus der ändert sich nicht daher braucht sie keine eübergabewerte
+  /* Gibt den Text aus der ï¿½ndert sich nicht daher braucht sie keine eï¿½bergabewerte
    * Time ist die Aktuelle Uhrzeit
-   * Start_AM soll der Text sein für den Start des Sonnenaufgang
-   * Start_PM soll der Text sein für den Start des Sonnenuntergang */
+   * Start_AM soll der Text sein fï¿½r den Start des Sonnenaufgang
+   * Start_PM soll der Text sein fï¿½r den Start des Sonnenuntergang */
 
   void print_text (void)
   {
@@ -291,7 +300,7 @@ static void MX_I2C1_Init(void)
   	lcd_send_string("START_PM");
   }
 
-  /* Mit dieser Funktion soll die Aktuelle, die Startzeit für den Aufgang und Untergang
+  /* Mit dieser Funktion soll die Aktuelle, die Startzeit fï¿½r den Aufgang und Untergang
    * ausgegeben werden.
    * Sie braucht:
    *  -Aktuelle stunde

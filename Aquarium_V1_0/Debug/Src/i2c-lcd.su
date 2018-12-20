@@ -1,4 +1,21 @@
+<<<<<<< HEAD
 i2c-lcd.c:7:6:lcd_send_cmd	24	static
 i2c-lcd.c:20:6:lcd_send_data	24	static
 i2c-lcd.c:34:6:lcd_init	8	static
 i2c-lcd.c:53:6:lcd_send_string	8	static
+=======
+i2c-lcd.c:10:6:lcd_send_cmd	24	static
+i2c-lcd.c:23:6:lcd_send_data	24	static
+i2c-lcd.c:36:6:lcd_init	8	static
+i2c-lcd.c:44:6:lcd_send_string	8	static
+i2c-lcd.c:50:6:cursor_jumpto_r_c	0	static
+i2c-lcd.c:67:6:cursor_shift_left	0	static
+i2c-lcd.c:73:6:cursor_shift_right	0	static
+i2c-lcd.c:79:6:cursor_shift_left_ntime	16	static
+i2c-lcd.c:88:6:cursor_shift_right_ntime	16	static
+i2c-lcd.c:97:6:delete_row	88	static
+i2c-lcd.c:108:6:delete_current_char	8	static
+i2c-lcd.c:116:6:delete_some_chars	24	dynamic
+i2c-lcd.c:128:6:blink_cursor_ON	0	static
+i2c-lcd.c:135:6:blink_cursor_off	0	static
+>>>>>>> LCB_tri
