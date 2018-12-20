@@ -124,16 +124,11 @@ void delete_current_char(void)
 
 void delete_some_chars (uint8_t number)
 {
-
 	char delete_me[number];
 
 	for (int i=0; i<number; i++){
 		delete_me[i]=' ';
 	}
-
-
-
-	cursor_shift_left_ntime(number);
 	lcd_send_string (&delete_me);		// Ueberschreibe mit leerem String
 	cursor_shift_left_ntime(number);	// laufe mit dem Cursor zurueck
 }

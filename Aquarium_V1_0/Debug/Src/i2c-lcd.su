@@ -10,7 +10,7 @@ i2c-lcd.c:99:6:cursor_shift_right_ntime	16	static
 i2c-lcd.c:108:6:delete_row	8	static
 i2c-lcd.c:117:6:delete_current_char	8	static
 i2c-lcd.c:125:6:delete_some_chars	16	dynamic
-i2c-lcd.c:143:6:blink_cursor_ON	0	static
-i2c-lcd.c:157:6:display_turn_on	0	static
-i2c-lcd.c:150:6:blink_cursor_off	0	static
-i2c-lcd.c:164:6:display_turn_off	0	static
+i2c-lcd.c:138:6:blink_cursor_ON	0	static
+i2c-lcd.c:152:6:display_turn_on	0	static
+i2c-lcd.c:145:6:blink_cursor_off	0	static
+i2c-lcd.c:159:6:display_turn_off	0	static
