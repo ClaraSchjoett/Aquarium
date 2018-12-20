@@ -311,11 +311,15 @@ static void MX_I2C1_Init(void)
    *  -Aktuelle Minute
    *  -Eingestellte Startzeit Morgen (time_am)
    *  -Eingestellte Startzeit Abend (time_pm)*/
-/*
-  void menu_print_time (int hours, int minutes, char *time_am[], char time_pm[])
+
+  void menu_print_time ( char *time_am[], char time_pm[])
   {
-	char* time[5];
-	sprintf(time[], "%d:%d", hours, minutes);
+	//HAL_GET
+
+	myTime.Hours=
+	myTime.Minutes
+	char time[5];
+	sprintf(time[], "%d:%d", myTime.hours, myTime.minutes);
   	lcd_send_cmd(0x0D);
   	lcd_send_string(&time[5]);
 
@@ -325,7 +329,7 @@ static void MX_I2C1_Init(void)
   	lcd_send_cmd(0x4A);
   	lcd_send_string(&time_pm);
   }
-/*
+
   /* USER CODE END I2C1_Init 2 */
 
 
