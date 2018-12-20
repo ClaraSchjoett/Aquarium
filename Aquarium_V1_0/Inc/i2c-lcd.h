@@ -23,3 +23,11 @@ void delete_row (uint8_t row);		// delete the whole row
 void delete_current_char(void);		// delete the current char
 
 void delete_some_chars (uint8_t number);	// delete some chars or n-time
+
+void blink_cursor_ON (void);
+
+void blink_cursor_off(void);
+
+void display_turn_on (void);
+
+void display_turn_off (void);

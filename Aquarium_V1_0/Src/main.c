@@ -95,14 +95,16 @@ static void MX_TIM2_Init(int brightness);
 void set_FL(int brightness);//set brightness of the FL light
 void set_RGB(int red, int green, int blue); //set RGB value for led strip
 
-void print_time (char time, char time_am, char time_pm);
-void print_text (void);
-void print_cursor (int linenumber);
+void menu_print_cursor (int linenumber);
+void menu_print_text (void);
+void menu_print_cursor (int linenumber);
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+
 
 /* USER CODE END 0 */
 
@@ -144,11 +146,17 @@ int main(void)
   MX_TIM2_Init(0);
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
-  // NOT MY CODE - > HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+
+   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
 
    lcd_init();
 
-   lcd_send_string("hello world");
+   menu_print_cursor (1);
+
+   menu_print_text();
+
+
+
 
    //HAL_I2C_Master_Transmit(&hi2c1, 0x4F, 0x01, 1, 10);
 
@@ -162,11 +170,6 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-	  HAL_I2C_Master_Transmit(&hi2c1, 0x4E, &pData, 1, 10);
-
-	  pData = 0x0C;
-
-	  HAL_I2C_Master_Transmit(&hi2c1, 0x4E, &pData, 1, 10);
 
 	set_RGB(25,0,0);
 	HAL_Delay(1000);
@@ -267,16 +270,17 @@ static void MX_I2C1_Init(void)
 	 * gew�nscht wird. Dazu braucht sie die Postion (linenumber). Sie giebt je nach
 	 * zeilenumer 1, 2 oder  3 den Pfeil im 2 und 3 Feld  auf der 1. 3. oder 4. Zeile aus.*/
 
-  void print_cursor (int linenumber)
+  void menu_print_cursor (int linenumber)
   {
   	switch(linenumber){
-  		case 1: lcd_send_cmd(0x81);
+  		case 1: cursor_jumpto_r_c (1, 2);
+
   				lcd_send_string("->");
   		break;
-  		case 2: lcd_send_cmd(0x29);
+  		case 2: cursor_jumpto_r_c (3, 2);
   				lcd_send_string("->");
   		break;
-  		case 3: lcd_send_cmd(0x3D);
+  		case 3: cursor_jumpto_r_c (4, 2);
   				lcd_send_string("->");
   		break;
   		}
@@ -288,16 +292,16 @@ static void MX_I2C1_Init(void)
    * Start_AM soll der Text sein f�r den Start des Sonnenaufgang
    * Start_PM soll der Text sein f�r den Start des Sonnenuntergang */
 
-  void print_text (void)
+  void menu_print_text (void)
   {
-  	lcd_send_cmd(0x04);
+	cursor_jumpto_r_c(1, 5);
   	lcd_send_string("TIME");
 
-  	lcd_send_cmd(0x2C);
-  	lcd_send_string("START_AM");
+  	cursor_jumpto_r_c(3, 5);
+  	lcd_send_string("Sunrise");
 
-  	lcd_send_cmd(0x40);
-  	lcd_send_string("START_PM");
+  	cursor_jumpto_r_c(4, 5);
+  	lcd_send_string("Sunset");
   }
 
   /* Mit dieser Funktion soll die Aktuelle, die Startzeit f�r den Aufgang und Untergang
@@ -308,7 +312,7 @@ static void MX_I2C1_Init(void)
    *  -Eingestellte Startzeit Morgen (time_am)
    *  -Eingestellte Startzeit Abend (time_pm)*/
 /*
-  void print_time (int hours, int minutes, char *time_am[], char time_pm[])
+  void menu_print_time (int hours, int minutes, char *time_am[], char time_pm[])
   {
 	char* time[5];
 	sprintf(time[], "%d:%d", hours, minutes);

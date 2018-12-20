@@ -34,21 +34,22 @@ void lcd_send_data (char data)
 
 void lcd_init (void)
 {
-uint8_t i=0;
-HAL_Delay(100);
-for(i=0;i<3;i++)  //sending 3 times: select 4-bit mode
-{
-lcd_send_cmd(0x03);
-HAL_Delay(45);
-}
-lcd_send_cmd (0x02);
-HAL_Delay(100);
-lcd_send_cmd (0x28);
-HAL_Delay(1);
-lcd_send_cmd (0x0c);
-HAL_Delay(1);
-lcd_send_cmd (0x80);
-HAL_Delay(1);
+	uint8_t i=0;
+	HAL_Delay(100);
+	for(i=0;i<3;i++)  //sending 3 times: select 4-bit mode
+	{
+		lcd_send_cmd(0x03);
+		HAL_Delay(45);
+	}
+	lcd_send_cmd (0x02);
+	HAL_Delay(100);
+	lcd_send_cmd (0x28);
+	HAL_Delay(1);
+	lcd_send_cmd (0x0c);
+	HAL_Delay(1);
+	lcd_send_cmd (0x80);
+	HAL_Delay(1);
+	lcd_send_cmd (0x01);
 }
 
 void lcd_send_string (char *str)
@@ -59,17 +60,17 @@ void lcd_send_string (char *str)
 // Spring mit Cursor zur Reihe und Spalte
 void cursor_jumpto_r_c (uint8_t row, uint8_t column)
 {
-	uint8_t mycmd;
+	uint8_t mycmd = 0;
 	switch(row){
 		case 1: mycmd = 0x80;break;		// MSB=1, Bits 6-0 = AC: 1-000 0000
 
-		case 2: mycmd = 0x94;break;		// 1-001 0100
+		case 2: mycmd = 0xC0;break;		// 1-001 0100
 
-		case 3: mycmd = 0xA8;break;		// 1-010 1000
+		case 3: mycmd = 0x94;break;		// 1-010 1000
 
-		case 4: mycmd = 0xBC;break;		// 1-011 1100
+		case 4: mycmd = 0xD4;break;		// 1-011 1100
 	}
-	mycmd += column;
+	mycmd += (column-1);
 	lcd_send_cmd (mycmd);
 }
 
@@ -106,31 +107,35 @@ void cursor_shift_right_ntime(uint8_t number)
 //L�sche die ganze Zeile
 void delete_row (uint8_t row)
 {
-	char *delete_me[20];
-	memset(delete_me,0,20);				//L�sche alles im Array
 
 	cursor_jumpto_r_c ( row, 0);
-	lcd_send_string (&delete_me);		// �berschreibe mit leerem String
-	cursor_jumpto_r_c ( row, 0);		// Springe zur ersten Stelle der Zeile zur�ck
+	lcd_send_string ("                    ");		// Ueberschreibe mit leerem String
+	cursor_jumpto_r_c ( row, 0);		// Springe zur ersten Stelle der Zeile zurueck
 }
 
 //L�sche das aktuelle Zeichen
 void delete_current_char(void)
 {
-	char delete_me= '\0';
+	char delete_me= ' ';
 	cursor_shift_left();
-	lcd_send_data (delete_me);			// �berschreibe mit leerem Char
+	lcd_send_data (delete_me);			// Ueberschreibe mit leerem Char
 	cursor_shift_left();
 }
 
 void delete_some_chars (uint8_t number)
 {
-	char *delete_me[number];
-	memset(delete_me,0,number);
+
+	char delete_me[number];
+
+	for (int i=0; i<number; i++){
+		delete_me[i]=' ';
+	}
+
+
 
 	cursor_shift_left_ntime(number);
-	lcd_send_string (&delete_me);		// �berschreibe mit leerem String
-	cursor_shift_left_ntime(number);	// laufe mit dem Cursor zur�ck
+	lcd_send_string (&delete_me);		// Ueberschreibe mit leerem String
+	cursor_shift_left_ntime(number);	// laufe mit dem Cursor zurueck
 }
 
 //Blinken des Cursor ON
@@ -145,4 +150,18 @@ void blink_cursor_ON (void)
 void blink_cursor_off(void)
 {
 	lcd_send_cmd(0x0C);
+}
+
+// Turn ON display
+
+void display_turn_on (void)
+{
+	lcd_send_cmd(0x0C);
+}
+
+// Turn OFF display
+
+void display_turn_off (void)
+{
+	lcd_send_cmd(0x08);
 }
