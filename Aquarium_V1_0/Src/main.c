@@ -298,7 +298,7 @@ static void MX_I2C1_Init(void)
    *  -Aktuelle Minute
    *  -Eingestellte Startzeit Morgen (time_am)
    *  -Eingestellte Startzeit Abend (time_pm)*/
-
+/*
   void print_time (int hours, int minutes, char *time_am[], char time_pm[])
   {
 	char* time[5];
@@ -312,7 +312,7 @@ static void MX_I2C1_Init(void)
   	lcd_send_cmd(0x4A);
   	lcd_send_string(&time_pm);
   }
-
+/*
   /* USER CODE END I2C1_Init 2 */
 
 
