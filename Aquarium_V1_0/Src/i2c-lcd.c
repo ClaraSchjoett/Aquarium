@@ -29,7 +29,7 @@ void lcd_send_data (char data)
 	data_t[3] = data_l|0x09;  //en=0, rs=0
 	HAL_I2C_Master_Transmit (&hi2c1, SLAVE_ADDRESS_LCD,(uint8_t *) data_t, 4, 100);
 }
-/*
+
 void lcd_init (void)
 {
 	lcd_send_cmd (0x02);
@@ -37,7 +37,7 @@ void lcd_init (void)
 	lcd_send_cmd (0x0c);
 	lcd_send_cmd (0x80);
 }
-*/
+/*
 void lcd_init (void)
 {
 uint8_t i=0;
@@ -56,7 +56,7 @@ HAL_Delay(1);
 lcd_send_cmd (0x80);
 HAL_Delay(1);
 }
-
+*/
 void lcd_send_string (char *str)
 {
 	while (*str) lcd_send_data (*str++);

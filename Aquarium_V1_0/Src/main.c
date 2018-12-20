@@ -143,6 +143,11 @@ int main(void)
   /* USER CODE BEGIN 2 */
    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
 
+   lcd_init();
+
+   lcd_send_string("hello world");
+
+   HAL_I2C_Master_Transmit(&hi2c1, 0x4F, 0x01, 1, 10);
 
   /* USER CODE END 2 */
 
@@ -153,11 +158,6 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
-	  lcd_init();
-
-	  print_text();
-	  HAL_Delay(2000);
 
 	set_RGB(25,0,0);
 	HAL_Delay(1000);
@@ -299,10 +299,10 @@ static void MX_I2C1_Init(void)
    *  -Eingestellte Startzeit Morgen (time_am)
    *  -Eingestellte Startzeit Abend (time_pm)*/
 
-  void print_time (int myTime.hours, int myTime.minutes, char *time_am[], char time_pm[])
+  void print_time (int hours, int minutes, char *time_am[], char time_pm[])
   {
-	char  time[5];
-	time[] = "%d:&d", myTime.hours, myTime.minutes;
+	char* time[5];
+	sprintf(time[], "%d:%d", hours, minutes);
   	lcd_send_cmd(0x0D);
   	lcd_send_string(&time[5]);
 
