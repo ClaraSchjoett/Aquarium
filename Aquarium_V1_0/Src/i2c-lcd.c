@@ -37,7 +37,7 @@ void lcd_init (void)
 {
 	lcd_send_cmd (0x02);
 	lcd_send_cmd (0x28);
-	lcd_send_cmd (0x0c);
+	lcd_send_cmd (0x0C);
 	lcd_send_cmd (0x80);
 }
 
@@ -59,7 +59,7 @@ void cursor_jumpto_r_c (uint8_t row, uint8_t column)
 
 		case 4: mycmd = 0xBC;break;		// 1-011 1100
 	}
-	mycmd+=column;
+	mycmd += column;
 	lcd_send_cmd (mycmd);
 }
 
@@ -121,4 +121,18 @@ void delete_some_chars (uint8_t number)
 	cursor_shift_left_ntime(number);
 	lcd_send_string (&delete_me);		// überschreibe mit leerem String
 	cursor_shift_left_ntime(number);	// laufe mit dem Cursor zurück
+}
+
+//Blinken des Cursor ON
+
+void blink_cursor_ON (void)
+{
+	lcd_send_cmd(0x0D);
+}
+
+//Blinken des Cursor OFF
+
+void blink_cursor_off(void)
+{
+	lcd_send_cmd(0x0C);
 }
