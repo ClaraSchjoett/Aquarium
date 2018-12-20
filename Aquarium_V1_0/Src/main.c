@@ -172,12 +172,6 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-	set_RGB(25,0,0);
-	HAL_Delay(1000);
-	set_RGB(75,0,0);
-	HAL_Delay(1000);
-	set_RGB(100,0,0);
-	HAL_Delay(1000);
 
 	switch (flag) {	 		// Interrupt triggers menu display and enables navigation
 	case 1:
@@ -656,9 +650,9 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pins : LD2_Pin PA6 */
-  GPIO_InitStruct.Pin = LD2_Pin|GPIO_PIN_6;
+  GPIO_InitStruct.Pin = LD2_Pin|GPIO_PIN_6|GPIO_PIN_10;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
