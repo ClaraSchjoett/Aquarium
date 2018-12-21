@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
+<<<<<<< HEAD
 	<section name="org.eclipse.cdt.ui.text.hover.CMacroExpansionExploration.internal">
 		<item value="620" key="size.height"/>
 		<item value="676" key="size.width"/>
@@ -9,5 +10,10 @@
 	<section name="completion_proposal_size">
 		<item value="316" key="size.y"/>
 		<item value="972" key="size.x"/>
+=======
+	<section name="org.eclipse.cdt.ui.text.hover.CMacroExpansionExploration">
+	</section>
+	<section name="completion_proposal_size">
+>>>>>>> LCD
 	</section>
 </section>

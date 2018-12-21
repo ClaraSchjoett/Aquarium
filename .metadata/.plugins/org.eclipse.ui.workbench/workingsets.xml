@@ -1,4 +1,14 @@
+<<<<<<< HEAD
 <?xml version="1.0" encoding="UTF-8"?>
 <workingSetManager>
 <workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1544121129555_0" label="Window Working Set" name="Aggregate for window 1544121129555"/>
+=======
+<?xml version="1.0" encoding="UTF-8"?>
+<workingSetManager>
+<<<<<<< HEAD
+<workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1544815516753_0" label="Window Working Set" name="Aggregate for window 1544815516753"/>
+=======
+<workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1544792935548_0" label="Window Working Set" name="Aggregate for window 1544792935548"/>
+>>>>>>> LCB_tri
+>>>>>>> LCD
 </workingSetManager>

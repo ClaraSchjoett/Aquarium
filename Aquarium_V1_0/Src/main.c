@@ -43,7 +43,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "i2c-lcd.h"
+#include "stdio.h"
 
 /* USER CODE END Includes */
 
@@ -102,10 +103,16 @@ static void MX_TIM2_Init(int brightness);
 void set_FL(int brightness);//set brightness of the FL light
 void set_RGB(int red, int green, int blue); //set RGB value for led strip
 
+void menu_print_cursor (int linenumber);
+void menu_print_text (void);
+void menu_print_time ( char time_am[6], char time_pm[6]);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+
 
 /* USER CODE END 0 */
 
@@ -116,6 +123,8 @@ void set_RGB(int red, int green, int blue); //set RGB value for led strip
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+
+
 
   /* USER CODE END 1 */
 
@@ -145,7 +154,30 @@ int main(void)
   MX_TIM2_Init(0);
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+
+   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+
+   lcd_init();
+
+   menu_print_cursor (1);
+
+   menu_print_text();
+
+   char AM[] = "08:15";
+   char PM[12] = "18:12";
+
+   menu_print_time(&AM, &PM);
+
+   menu_print_cursor(3);
+
+   menu_print_text();
+
+   menu_print_cursor(2);
+
+
+
+
+   //HAL_I2C_Master_Transmit(&hi2c1, 0x4F, 0x01, 1, 10);
 
   /* USER CODE END 2 */
   //Set time, data and alarm
@@ -172,6 +204,13 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
+
+	set_RGB(25,0,0);
+	HAL_Delay(1000);
+	set_RGB(75,0,0);
+	HAL_Delay(1000);
+	set_RGB(100,0,0);
+	HAL_Delay(1000);
 
 	switch (flag) {	 		// Interrupt triggers menu display and enables navigation
 	case 1:
@@ -291,11 +330,89 @@ static void MX_I2C1_Init(void)
   {
     Error_Handler();
   }
+
+}
   /* USER CODE BEGIN I2C1_Init 2 */
+
+	/* Funktion soll den Pfeil auf dem display ausgeben an der Position di vom Rotary
+	 * gew�nscht wird. Dazu braucht sie die Postion (linenumber). Sie giebt je nach
+	 * zeilenumer 1, 2 oder  3 den Pfeil im 2 und 3 Feld  auf der 1. 3. oder 4. Zeile aus.*/
+
+  void menu_print_cursor (int linenumber)
+  {
+  	switch(linenumber){
+  		case 1: cursor_jumpto_r_c (3, 2);
+  				delete_some_chars(2);
+  				cursor_jumpto_r_c (4, 2);
+   				delete_some_chars(2);
+  				cursor_jumpto_r_c (1, 2);
+  				lcd_send_string("->");
+  		break;
+  		case 2: cursor_jumpto_r_c (1, 2);
+				delete_some_chars(2);
+				cursor_jumpto_r_c (4, 2);
+				delete_some_chars(2);
+  				cursor_jumpto_r_c (3, 2);
+  				lcd_send_string("->");
+  		break;
+  		case 3: cursor_jumpto_r_c (1, 2);
+				delete_some_chars(2);
+				cursor_jumpto_r_c (3, 2);
+				delete_some_chars(2);
+				cursor_jumpto_r_c (4, 2);
+  				lcd_send_string("->");
+  		break;
+  		}
+
+  }
+
+  /* Gibt den Text aus der �ndert sich nicht daher braucht sie keine e�bergabewerte
+   * Time ist die Aktuelle Uhrzeit
+   * Start_AM soll der Text sein f�r den Start des Sonnenaufgang
+   * Start_PM soll der Text sein f�r den Start des Sonnenuntergang */
+
+  void menu_print_text (void)
+  {
+	cursor_jumpto_r_c(1, 5);
+  	lcd_send_string("TIME");
+
+  	cursor_jumpto_r_c(3, 5);
+  	lcd_send_string("SUNRISE");
+
+  	cursor_jumpto_r_c(4, 5);
+  	lcd_send_string("SUNSET");
+  }
+
+  /* Mit dieser Funktion soll die Aktuelle, die Startzeit f�r den Aufgang und Untergang
+   * ausgegeben werden.
+   * Sie braucht:
+   *  -Aktuelle stunde
+   *  -Aktuelle Minute
+   *  -Eingestellte Startzeit Morgen (time_am)
+   *  -Eingestellte Startzeit Abend (time_pm)*/
+
+  void menu_print_time ( char time_am[6], char time_pm[6])
+  {
+/*
+	myTime.Hours[] = HAL_
+	myTime.Minutes [] = HAL_
+	char time[5];
+	sprintf(time[], "%d:%d", myTime.hours, myTime.minutes);
+  	lcd_send_cmd(0x0D);
+  	lcd_send_string(&time[5]);
+*/
+  	cursor_jumpto_r_c(3, 15);
+  	delete_some_chars(5);
+	lcd_send_string(time_am);
+
+  	cursor_jumpto_r_c(4, 15);
+  	delete_some_chars(5);
+  	lcd_send_string(time_pm);
+  }
 
   /* USER CODE END I2C1_Init 2 */
 
-}
+
 
 /**
   * @brief RTC Initialization Function
@@ -693,6 +810,9 @@ void set_FL(int brightness)
 {
 	MX_TIM2_Init(brightness);
 }
+
+
+
 /* USER CODE END 4 */
 
 /**

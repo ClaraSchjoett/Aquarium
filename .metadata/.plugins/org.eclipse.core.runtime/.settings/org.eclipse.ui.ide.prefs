@@ -1,5 +1,19 @@
+<<<<<<< HEAD
 PROBLEMS_FILTERS_MIGRATE=true
 eclipse.preferences.version=1
 platformState=1538633555730
 quickStart=false
 tipsAndTricks=true
+=======
+PROBLEMS_FILTERS_MIGRATE=true
+<<<<<<< HEAD
+eclipse.preferences.version=1
+platformState=1537426697972
+=======
+TASKS_FILTERS_MIGRATE=true
+eclipse.preferences.version=1
+platformState=1538633555730
+>>>>>>> LCB_tri
+quickStart=false
+tipsAndTricks=true
+>>>>>>> LCD
