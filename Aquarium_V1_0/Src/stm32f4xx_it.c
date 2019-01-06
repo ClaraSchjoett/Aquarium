@@ -74,6 +74,7 @@
 extern RTC_HandleTypeDef hrtc;
 /* USER CODE BEGIN EV */
 extern int *pReason;
+extern char *pbuttonpress;
 
 extern GPIO_PinState *pstateA;
 extern GPIO_PinState *ppreviousA;
@@ -222,7 +223,8 @@ void SysTick_Handler(void)
 void EXTI1_IRQHandler(void)
 {
 	/* USER CODE BEGIN EXTI1_IRQn 0 */
-	*pReason = 1;
+	*pReason = 2;	// Set flag to one for the switch-case in main
+
 	/* USER CODE END EXTI1_IRQn 0 */
 	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
 	/* USER CODE BEGIN EXTI1_IRQn 1 */
@@ -238,13 +240,13 @@ void EXTI9_5_IRQHandler(void)
 	/* USER CODE BEGIN EXTI9_5_IRQn 0 */
 
 	/* USER CODE BEGIN EXTI9_5_IRQn 0 */
-	if(__HAL_GPIO_EXTI_GET_FLAG(GPIO_PIN_8)){
-		*pReason = 2;
-	}
+	//if(__HAL_GPIO_EXTI_GET_FLAG(GPIO_PIN_8)){
+	*pReason = read_encoder();
+	//}
 
-	if(__HAL_GPIO_EXTI_GET_FLAG(GPIO_PIN_9)){
-		*pReason = 3;
-	}
+	//if(__HAL_GPIO_EXTI_GET_FLAG(GPIO_PIN_9)){
+	//	*pReason = 3;
+	//}
 	/* USER CODE END EXTI9_5_IRQn 0 */
 
 
@@ -256,17 +258,13 @@ void EXTI9_5_IRQHandler(void)
 //		*pReason = 3;
 //	}
 //	*ppreviousA = *pstateA;
-	//TODO what happens when the rotary encoder is turned and pulls potential of this pin to ground?
-	//TODO check for set flag in main (polling) and call menu function if flag is set
-	//}
+
 
 	/*if(__HAL_GPIO_EXTI_GET_FLAG(GPIO_PIN_9)){
 	  if ((HAL_GPIO_ReadPin(GPIO_PIN_9) != *ppreviousB) && (HAL_GPIO_ReadPin(GPIO_PIN_8) == *ppreviousA)){
 	  //TODO what happens when the rotary encoder is turned and pulls potential of this pin to ground?
-	  //TODO check for set flag in main (polling) and call menu function if flag is set
-	 *pReason = 3;
-	  }
-  }*/
+	  //TODO check for set flag in main (polling) and call menu function if flag is set*/
+
 	/* USER CODE END EXTI9_5_IRQn 0 */
 	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_8);		// Clear interrupt flag
 	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_9);		// Clear interrupt flag
