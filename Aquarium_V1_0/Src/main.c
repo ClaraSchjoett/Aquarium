@@ -200,7 +200,7 @@ int main(void)
   /* USER CODE END 2 */
   //Set time, data and alarm
   	//1) Set time
-  	myTime.Hours = 5;
+  	myTime.Hours = 6;
   	myTime.Minutes = 20;
   	myTime.Seconds = 45;
   	HAL_RTC_SetTime(&hrtc, &myTime, RTC_FORMAT_BIN);
@@ -225,7 +225,7 @@ int main(void)
 
 
 
-  	set_RGB(1000,0,0);
+  	//set_RGB(1000,0,0);
 
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -243,7 +243,7 @@ int main(void)
 
 
 	  if(display_timer!=myTime.Minutes){
-		  menu_print_time(8,23,18,45);
+		  menu_print_time(sunriseTime.Hours,sunriseTime.Minutes,sunsetTime.Hours,sunsetTime.Minutes);
 		  display_timer=myTime.Minutes;
 	  }
 
@@ -291,6 +291,9 @@ int main(void)
 			break;
 		}
 
+
+
+
 	switch (menue_state) {	 		// Interrupt triggers menu display and enables navigation
 		case 1:
 			menu_print_cursor(1);
@@ -301,7 +304,9 @@ int main(void)
 		case 3:
 			menu_print_cursor(3);
 			break;
-
+		case 4:
+			menu_print_cursor(4);
+			break;
 		default:
 			break;
 		}
@@ -496,7 +501,10 @@ static void MX_I2C1_Init(void)
   void menu_print_cursor (int linenumber)
   {
   	switch(linenumber){
-  		case 1: cursor_jumpto_r_c (3, 2);
+  		case 1:
+  				cursor_jumpto_r_c (2, 2);
+  				delete_some_chars(2);
+  				cursor_jumpto_r_c (3, 2);
   				delete_some_chars(2);
   				cursor_jumpto_r_c (4, 2);
    				delete_some_chars(2);
@@ -505,17 +513,30 @@ static void MX_I2C1_Init(void)
   		break;
   		case 2: cursor_jumpto_r_c (1, 2);
 				delete_some_chars(2);
+				cursor_jumpto_r_c (3, 2);
+				delete_some_chars(2);
 				cursor_jumpto_r_c (4, 2);
 				delete_some_chars(2);
-  				cursor_jumpto_r_c (3, 2);
+  				cursor_jumpto_r_c (2, 2);
   				lcd_send_string("->");
   		break;
   		case 3: cursor_jumpto_r_c (1, 2);
 				delete_some_chars(2);
-				cursor_jumpto_r_c (3, 2);
+				cursor_jumpto_r_c (2, 2);
 				delete_some_chars(2);
 				cursor_jumpto_r_c (4, 2);
+				delete_some_chars(2);
+				cursor_jumpto_r_c (3, 2);
   				lcd_send_string("->");
+  		break;
+  		case 4: cursor_jumpto_r_c (1, 2);
+  				delete_some_chars(2);
+  				cursor_jumpto_r_c (2, 2);
+  				delete_some_chars(2);
+  				cursor_jumpto_r_c (3, 2);
+  				delete_some_chars(2);
+  				cursor_jumpto_r_c (4, 2);
+  		  		lcd_send_string("->");
   		break;
   		}
 
@@ -529,6 +550,9 @@ static void MX_I2C1_Init(void)
   void menu_print_text (void)
   {
 	cursor_jumpto_r_c(1, 5);
+	lcd_send_string("running...");
+
+	cursor_jumpto_r_c(2, 5);
   	lcd_send_string("TIME");
 
   	cursor_jumpto_r_c(3, 5);
@@ -565,7 +589,7 @@ static void MX_I2C1_Init(void)
 
 	 char realtime[5];
 	 sprintf(realtime, "%2d:%2d",myTime.Hours,myTime.Minutes);
-	 cursor_jumpto_r_c(1, 15);
+	 cursor_jumpto_r_c(2, 15);
 	 //delete_some_chars(5);
 	 lcd_send_string(&realtime);
 
