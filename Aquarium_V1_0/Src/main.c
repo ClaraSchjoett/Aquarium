@@ -93,6 +93,7 @@ int state=0;
 
 int sunset_timer=0;
 int sunrise_timer=0;
+int display_timer=0;
 
 int red=0;
 int green=0;
@@ -199,7 +200,7 @@ int main(void)
   /* USER CODE END 2 */
   //Set time, data and alarm
   	//1) Set time
-  	myTime.Hours = 17;
+  	myTime.Hours = 5;
   	myTime.Minutes = 20;
   	myTime.Seconds = 45;
   	HAL_RTC_SetTime(&hrtc, &myTime, RTC_FORMAT_BIN);
@@ -216,7 +217,7 @@ int main(void)
   /* Infinite loop */
 
 
-  	sunriseTime.Hours = 5;
+  	sunriseTime.Hours = 6;
   sunriseTime.Minutes = 21;
 
   	sunsetTime.Hours = 18;
@@ -224,7 +225,7 @@ int main(void)
 
 
 
-
+  	set_RGB(1000,0,0);
 
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -233,7 +234,18 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
+
+
+
 	  RTC_get_Time_and_Date();
+
+
+
+
+	  if(display_timer!=myTime.Minutes){
+		  menu_print_time(8,23,18,45);
+		  display_timer=myTime.Minutes;
+	  }
 
 
 
@@ -242,16 +254,18 @@ int main(void)
 			  state=1;
 		  }
 	  }
-	  if(sunsetTime.Hours == myTime.Hours){
-	  	  if(sunsetTime.Minutes == myTime.Minutes){
-	  		  state=2;
-	      }
-	  }
-
 	  if(sunriseTime.Hours+1 == myTime.Hours){
 		  if(sunriseTime.Minutes == myTime.Minutes){
 			  state=3;
 		  }
+	  }
+
+
+
+	  if(sunsetTime.Hours == myTime.Hours){
+	  	  if(sunsetTime.Minutes == myTime.Minutes){
+	  		  state=2;
+	      }
 	  }
 	  if(sunsetTime.Hours-1 == myTime.Hours){
 	  	  if(sunsetTime.Minutes == myTime.Minutes){
@@ -273,6 +287,7 @@ int main(void)
 			LED_Dimm_Up();
 			break;
 		default:
+
 			break;
 		}
 
@@ -307,7 +322,7 @@ void sunrise(void)
 	RTC_get_Time_and_Date();
 	if((red<=1000) && (green<=1000) && (blue<=1000))
 	{
-		if(sunrise_timer<myTime.Seconds)
+		if(sunrise_timer!=myTime.Seconds)
 		{
 			red=red+25;
 			green=green+8;
@@ -315,8 +330,9 @@ void sunrise(void)
 			FLbrightness=FLbrightness+25;
 			set_FL(FLbrightness);
 			set_RGB(red,green,blue);
+			sunrise_timer=myTime.Seconds;
 		}
-		sunrise_timer=myTime.Seconds;
+
 	}
 }
 
@@ -325,7 +341,7 @@ void sunset(void)
 	RTC_get_Time_and_Date();
 	if((red>=1) && (green>=1) && (blue>=1))
 	{
-		if(sunrise_timer<myTime.Seconds)
+		if(sunrise_timer!=myTime.Seconds)
 		{
 			red=red-25;
 			green=green-8;
@@ -333,8 +349,9 @@ void sunset(void)
 			FLbrightness=FLbrightness-25;
 			set_FL(FLbrightness);
 			set_RGB(red,green,blue);
+			sunrise_timer=myTime.Seconds;
 		}
-		sunrise_timer=myTime.Seconds;
+
 	}
 }
 void LED_Dimm_Up(void)
@@ -342,7 +359,7 @@ void LED_Dimm_Up(void)
 	RTC_get_Time_and_Date();
 	if((red<=1000) && (green<=1000) && (blue<=1000))
 	{
-		if(sunrise_timer<myTime.Seconds)
+		if(sunrise_timer!=myTime.Seconds)
 		{
 			red=red+50;
 			green=green+16;
@@ -350,8 +367,9 @@ void LED_Dimm_Up(void)
 			FLbrightness=FLbrightness+25;
 			set_FL(FLbrightness);
 			set_RGB(red,green,blue);
+			sunrise_timer=myTime.Seconds;
 		}
-		sunrise_timer=myTime.Seconds;
+
 	}
 }
 void LED_Dimm_Down(void)
@@ -359,16 +377,17 @@ void LED_Dimm_Down(void)
 	RTC_get_Time_and_Date();
 	if((red>=1) && (green>=1) && (blue>=1))
 	{
-		if(sunrise_timer<myTime.Seconds)
+		if(sunrise_timer!=myTime.Seconds)
 		{
-			red=red-50;
+			red=red-200;
 			green=green-16;
 			blue=blue-2;
 			FLbrightness=FLbrightness-25;
 			set_FL(FLbrightness);
 			set_RGB(red,green,blue);
+			sunrise_timer=myTime.Seconds;
 		}
-		sunrise_timer=myTime.Seconds;
+
 	}
 }
 
@@ -530,24 +549,24 @@ static void MX_I2C1_Init(void)
   void menu_print_time (uint8_t HoursSunrise, uint8_t MinutesSunrise,uint8_t HoursSunset, uint8_t MinutesSunset)
   {
 	  char sunrise[5];
-	  sprintf(sunrise, "%d:%d",HoursSunrise,MinutesSunrise);
+	  sprintf(sunrise, "%2d:%2d",HoursSunrise,MinutesSunrise);
 	  cursor_jumpto_r_c(3, 15);
-	  delet_some_chars(5);
+	  //delete_some_chars(5);
 	  lcd_send_string(&sunrise);
 
 	  char sunset[5];
-	  sprintf(sunset, "%d:%d",HoursSunset,MinutesSunset);
+	  sprintf(sunset, "%2d:%2d",HoursSunset,MinutesSunset);
 	  cursor_jumpto_r_c(4, 15);
-	  delet_some_chars(5);
+	  //delete_some_chars(5);
 	  lcd_send_string(&sunset);
 
 
 	  RTC_get_Time_and_Date();
 
 	 char realtime[5];
-	 sprintf(realtime, "%d:%d",myTime.Hours,myTime.Minutes);
+	 sprintf(realtime, "%2d:%2d",myTime.Hours,myTime.Minutes);
 	 cursor_jumpto_r_c(1, 15);
-	 delet_some_chars(5);
+	 //delete_some_chars(5);
 	 lcd_send_string(&realtime);
 
 

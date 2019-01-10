@@ -1,24 +1,21 @@
-<<<<<<< HEAD
-=======
-main.c:142:5:main	8	static
-main.c:300:6:set_RGB	24	static
-main.c:307:6:sunrise	8	static
-main.c:325:6:sunset	8	static
-main.c:342:6:LED_Dimm_Up	8	static
-main.c:359:6:LED_Dimm_Down	8	static
-main.c:381:6:RTC_get_Time_and_Date	8	static
-main.c:395:6:SystemClock_Config	184	static
-main.c:448:13:MX_I2C1_Init	8	static
-main.c:479:8:menu_print_cursor	16	static
-main.c:512:8:menu_print_text	8	static
-main.c:532:8:menu_print_time	16	static
-main.c:560:13:MX_RTC_Init	72	static
-main.c:638:13:MX_TIM2_Init	56	static
-main.c:686:13:MX_TIM3_Init	56	static
-main.c:734:13:MX_TIM4_Init	56	static
-main.c:782:13:MX_TIM8_Init	80	static
-main.c:846:13:MX_USART2_UART_Init	8	static
-main.c:879:13:MX_GPIO_Init	48	static
-main.c:942:6:set_FL	16	static
-main.c:955:6:Error_Handler	4	static
->>>>>>> master
+main.c:144:5:main	8	static
+main.c:313:6:set_RGB	24	static
+main.c:320:6:sunrise	8	static
+main.c:339:6:sunset	8	static
+main.c:357:6:LED_Dimm_Up	8	static
+main.c:375:6:LED_Dimm_Down	8	static
+main.c:398:6:RTC_get_Time_and_Date	8	static
+main.c:412:6:SystemClock_Config	184	static
+main.c:465:13:MX_I2C1_Init	8	static
+main.c:496:8:menu_print_cursor	16	static
+main.c:529:8:menu_print_text	8	static
+main.c:549:8:menu_print_time	48	static
+main.c:585:13:MX_RTC_Init	72	static
+main.c:663:13:MX_TIM2_Init	56	static
+main.c:711:13:MX_TIM3_Init	56	static
+main.c:759:13:MX_TIM4_Init	56	static
+main.c:807:13:MX_TIM8_Init	80	static
+main.c:871:13:MX_USART2_UART_Init	8	static
+main.c:904:13:MX_GPIO_Init	48	static
+main.c:967:6:set_FL	16	static
+main.c:980:6:Error_Handler	4	static
