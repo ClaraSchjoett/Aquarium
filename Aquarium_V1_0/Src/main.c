@@ -87,7 +87,7 @@ UART_HandleTypeDef huart2;
 int flag = 0;			// Interrupt reason: 0 = button, 1 = rotary channel a; 2 = rotary channel b.
 int *pflag = &flag;		// Enables us to access variable flag in other source files.
 
-int menue_state=0;
+int menue_state=1;
 int state=0;
 
 int sunset_timer=0;
@@ -201,7 +201,7 @@ int main(void)
   /* USER CODE END 2 */
   //Set time, data and alarm
   	//1) Set time
-  	myTime.Hours = 2;
+  	myTime.Hours = 17;
   	myTime.Minutes = 20;
   	myTime.Seconds = 45;
   	HAL_RTC_SetTime(&hrtc, &myTime, RTC_FORMAT_BIN);
@@ -218,11 +218,11 @@ int main(void)
   /* Infinite loop */
 
 
-  	//sunriseTime.Hours = 1;
-  	//sunriseTime.Minutes = 21;
+  	sunriseTime.Hours = 5;
+  sunriseTime.Minutes = 21;
 
-  	//sunsetTime.Hours = 3;
-  	//sunsetTime.Minutes = 21;
+  	sunsetTime.Hours = 18;
+  	sunsetTime.Minutes = 21;
 
 
 
@@ -317,8 +317,6 @@ void sunrise(void)
 			FLbrightness=FLbrightness+25;
 			set_FL(FLbrightness);
 			set_RGB(red,green,blue);
-
-
 		}
 		sunrise_timer=myTime.Seconds;
 	}
