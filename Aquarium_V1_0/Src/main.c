@@ -96,6 +96,7 @@ int sunrise_timer=0;
 int red=0;
 int green=0;
 int blue=0;
+int FLbrightness=0;
 
 /* USER CODE END PV */
 
@@ -177,9 +178,9 @@ int main(void)
 
    lcd_init();
 
-   //menu_print_cursor(1);
+   menu_print_cursor(1);
 
-   //menu_print_text();
+   menu_print_text();
 
    //char AM[] = "08:15";
    //char PM[12] = "18:12";
@@ -200,8 +201,8 @@ int main(void)
   /* USER CODE END 2 */
   //Set time, data and alarm
   	//1) Set time
-  	myTime.Hours = 12;
-  	myTime.Minutes = 59;
+  	myTime.Hours = 2;
+  	myTime.Minutes = 20;
   	myTime.Seconds = 45;
   	HAL_RTC_SetTime(&hrtc, &myTime, RTC_FORMAT_BIN);
   	//2) Set date
@@ -215,18 +216,26 @@ int main(void)
   //To get time, data, use this
   	//RTC_get_Time_and_Date();
   /* Infinite loop */
+
+
+  	//sunriseTime.Hours = 1;
+  	//sunriseTime.Minutes = 21;
+
+  	//sunsetTime.Hours = 3;
+  	//sunsetTime.Minutes = 21;
+
+
+
+
+
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
 	  RTC_get_Time_and_Date();
-	 // if(sunrisetime == myTime)state=1;
-
-
-	 // if(0 == memcmp(sunriseTime, myTime, 3))state=1;
-	  //if(0 == memcmp(sunsetTime, myTime, 3))state=2;
 
 
 
@@ -252,7 +261,6 @@ int main(void)
 	      }
 	  }
 
-
 	switch (state) {	 		// Interrupt triggers menu display and enables navigation
 		case 1:
 			sunrise();
@@ -272,13 +280,13 @@ int main(void)
 
 	switch (menue_state) {	 		// Interrupt triggers menu display and enables navigation
 		case 1:
-
+			menu_print_cursor(1);
 			break;
 		case 2:
-
+			menu_print_cursor(2);
 			break;
 		case 3:
-
+			menu_print_cursor(3);
 			break;
 
 		default:
@@ -306,7 +314,11 @@ void sunrise(void)
 			red=red+25;
 			green=green+8;
 			blue=blue+1;
+			FLbrightness=FLbrightness+25;
+			set_FL(FLbrightness);
 			set_RGB(red,green,blue);
+
+
 		}
 		sunrise_timer=myTime.Seconds;
 	}
@@ -322,6 +334,8 @@ void sunset(void)
 			red=red-25;
 			green=green-8;
 			blue=blue-1;
+			FLbrightness=FLbrightness-25;
+			set_FL(FLbrightness);
 			set_RGB(red,green,blue);
 		}
 		sunrise_timer=myTime.Seconds;
@@ -337,6 +351,8 @@ void LED_Dimm_Up(void)
 			red=red+50;
 			green=green+16;
 			blue=blue+2;
+			FLbrightness=FLbrightness+25;
+			set_FL(FLbrightness);
 			set_RGB(red,green,blue);
 		}
 		sunrise_timer=myTime.Seconds;
@@ -352,6 +368,8 @@ void LED_Dimm_Down(void)
 			red=red-50;
 			green=green-16;
 			blue=blue-2;
+			FLbrightness=FLbrightness-25;
+			set_FL(FLbrightness);
 			set_RGB(red,green,blue);
 		}
 		sunrise_timer=myTime.Seconds;
