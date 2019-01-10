@@ -205,13 +205,6 @@ int main(void)
     /* USER CODE BEGIN 3 */
 
 
-	set_RGB(25,0,0);
-	HAL_Delay(1000);
-	set_RGB(75,0,0);
-	HAL_Delay(1000);
-	set_RGB(100,0,0);
-	HAL_Delay(1000);
-
 	switch (flag) {	 		// Interrupt triggers menu display and enables navigation
 	case 1:
 		// TODO start countdown LCD illuminance timer
