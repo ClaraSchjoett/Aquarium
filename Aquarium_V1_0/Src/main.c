@@ -83,6 +83,16 @@ UART_HandleTypeDef huart2;
 int flag = 0;			// Interrupt reason: 0 = button, 1 = rotary channel a; 2 = rotary channel b.
 int *pflag = &flag;		// Enables us to access variable flag in other source files.
 
+int sunset_timer=0;
+int sunrise_timer=0;
+
+int red_counter=0;
+int green_counter=0;
+int blue_counter=0;
+int red=0;
+int green=0;
+int blue=0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -107,6 +117,10 @@ void menu_print_cursor (int linenumber);
 void menu_print_text (void);
 void menu_print_time ( char time_am[6], char time_pm[6]);
 
+void sunrise(void);
+void sunset(void);
+void LED_Dimm_Up(void);
+void LED_Dimm_Down(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -205,6 +219,11 @@ int main(void)
     /* USER CODE BEGIN 3 */
 
 
+	  //sunrise();
+	  //LED_Dimm_Up();
+	  //set_RGB(1000,10,0);
+
+
 	switch (flag) {	 		// Interrupt triggers menu display and enables navigation
 	case 1:
 		// TODO start countdown LCD illuminance timer
@@ -219,6 +238,7 @@ int main(void)
 		// TODO start menu navigation
 		break;
 	default:
+		break;
 
 	}
 
@@ -227,6 +247,75 @@ int main(void)
   }
   /* USER CODE END 3 */
 }
+void set_RGB(int red, int green, int blue)
+{
+	MX_TIM4_Init(red);
+	MX_TIM3_Init(green);
+	MX_TIM8_Init(blue);
+}
+
+void sunrise(void)
+{
+	RTC_get_Time_and_Date();
+	if((red<=1000) && (green<=1000) && (blue<=1000))
+	{
+		if(sunrise_timer<myTime.Seconds)
+		{
+			red=red+25;
+			green=green+8;
+			blue=blue+1;
+			set_RGB(red,green,blue);
+		}
+		sunrise_timer=myTime.Seconds;
+	}
+}
+
+void sunset(void)
+{
+	RTC_get_Time_and_Date();
+	if((red>=1) && (green>=1) && (blue>=1))
+	{
+		if(sunrise_timer<myTime.Seconds)
+		{
+			red=red-25;
+			green=green-8;
+			blue=blue-1;
+			set_RGB(red,green,blue);
+		}
+		sunrise_timer=myTime.Seconds;
+	}
+}
+void LED_Dimm_Up(void)
+{
+	RTC_get_Time_and_Date();
+	if((red<=1000) && (green<=1000) && (blue<=1000))
+	{
+		if(sunrise_timer<myTime.Seconds)
+		{
+			red=red+50;
+			green=green+16;
+			blue=blue+2;
+			set_RGB(red,green,blue);
+		}
+		sunrise_timer=myTime.Seconds;
+	}
+}
+void LED_Dimm_Down(void)
+{
+	RTC_get_Time_and_Date();
+	if((red<=1000) && (green<=1000) && (blue<=1000))
+	{
+		if(sunrise_timer<myTime.Seconds)
+		{
+			red=red-50;
+			green=green-16;
+			blue=blue-2;
+			set_RGB(red,green,blue);
+		}
+		sunrise_timer=myTime.Seconds;
+	}
+}
+
 
 
 
@@ -240,8 +329,6 @@ void RTC_get_Time_and_Date(void)
 
 }
 /* USER CODE END RTC_Init 2 */
-
-
 
 /**
   * @brief System Clock Configuration
@@ -504,9 +591,9 @@ static void MX_TIM2_Init(int brightness)
 
   /* USER CODE END TIM2_Init 1 */
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 0;
+  htim2.Init.Prescaler = 84;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 0;
+  htim2.Init.Period = 1000;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   if (HAL_TIM_PWM_Init(&htim2) != HAL_OK)
   {
@@ -552,9 +639,9 @@ static void MX_TIM3_Init(int duty)
 
   /* USER CODE END TIM3_Init 1 */
   htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 840;
+  htim3.Init.Prescaler = 84;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 100;
+  htim3.Init.Period = 1000;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   if (HAL_TIM_PWM_Init(&htim3) != HAL_OK)
   {
@@ -600,9 +687,9 @@ static void MX_TIM4_Init(int duty)
 
   /* USER CODE END TIM4_Init 1 */
   htim4.Instance = TIM4;
-  htim4.Init.Prescaler = 840;
+  htim4.Init.Prescaler = 84;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim4.Init.Period = 100;
+  htim4.Init.Period = 1000;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   if (HAL_TIM_PWM_Init(&htim4) != HAL_OK)
   {
@@ -649,9 +736,9 @@ static void MX_TIM8_Init(int duty)
 
   /* USER CODE END TIM8_Init 1 */
   htim8.Instance = TIM8;
-  htim8.Init.Prescaler = 840;
+  htim8.Init.Prescaler = 84;
   htim8.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim8.Init.Period = 100;
+  htim8.Init.Period = 1000;
   htim8.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim8.Init.RepetitionCounter = 0;
   if (HAL_TIM_PWM_Init(&htim8) != HAL_OK)
@@ -792,12 +879,7 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void set_RGB(int red, int green, int blue)
-{
-	MX_TIM4_Init(red);
-	MX_TIM3_Init(green);
-	MX_TIM8_Init(blue);
-}
+
 
 void set_FL(int brightness)
 {
