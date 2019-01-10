@@ -45,6 +45,7 @@
 /* USER CODE BEGIN Includes */
 #include "i2c-lcd.h"
 #include "stdio.h"
+#include <string.h>
 
 /* USER CODE END Includes */
 
@@ -115,7 +116,7 @@ void set_RGB(int red, int green, int blue); //set RGB value for led strip
 
 void menu_print_cursor (int linenumber);
 void menu_print_text (void);
-void menu_print_time ( char time_am[6], char time_pm[6]);
+void menu_print_time (uint8_t HoursSunrise, uint8_t MinutesSunrise,uint8_t HoursSunset, uint8_t MinutesSunset);
 
 void sunrise(void);
 void sunset(void);
@@ -177,10 +178,7 @@ int main(void)
 
    menu_print_text();
 
-   char AM[] = "08:15";
-   char PM[12] = "18:12";
 
-   menu_print_time(&AM, &PM);
 
    menu_print_cursor(3);
 
@@ -446,10 +444,10 @@ static void MX_I2C1_Init(void)
 
   }
 
-  /* Gibt den Text aus der �ndert sich nicht daher braucht sie keine e�bergabewerte
+  /* Gibt den Text aus der aendert sich nicht daher braucht sie keine Uebergabewerte
    * Time ist die Aktuelle Uhrzeit
-   * Start_AM soll der Text sein f�r den Start des Sonnenaufgang
-   * Start_PM soll der Text sein f�r den Start des Sonnenuntergang */
+   * Start_AM soll der Text sein fuer den Start des Sonnenaufgang
+   * Start_PM soll der Text sein fuer den Start des Sonnenuntergang */
 
   void menu_print_text (void)
   {
@@ -463,7 +461,7 @@ static void MX_I2C1_Init(void)
   	lcd_send_string("SUNSET");
   }
 
-  /* Mit dieser Funktion soll die Aktuelle, die Startzeit f�r den Aufgang und Untergang
+  /* Mit dieser Funktion soll die Aktuelle, die Startzeit fuer den Aufgang und Untergang
    * ausgegeben werden.
    * Sie braucht:
    *  -Aktuelle stunde
@@ -471,23 +469,31 @@ static void MX_I2C1_Init(void)
    *  -Eingestellte Startzeit Morgen (time_am)
    *  -Eingestellte Startzeit Abend (time_pm)*/
 
-  void menu_print_time ( char time_am[6], char time_pm[6])
+  void menu_print_time (uint8_t HoursSunrise, uint8_t MinutesSunrise,uint8_t HoursSunset, uint8_t MinutesSunset)
   {
-/*
-	myTime.Hours[] = HAL_
-	myTime.Minutes [] = HAL_
-	char time[5];
-	sprintf(time[], "%d:%d", myTime.hours, myTime.minutes);
-  	lcd_send_cmd(0x0D);
-  	lcd_send_string(&time[5]);
-*/
-  	cursor_jumpto_r_c(3, 15);
-  	delete_some_chars(5);
-	lcd_send_string(time_am);
+	  char sunrise[5];
+	  sprintf(sunrise, "%d:%d",HoursSunrise,MinutesSunrise);
+	  cursor_jumpto_r_c(3, 15);
+	  delet_some_chars(5);
+	  lcd_send_string(&sunrise);
 
-  	cursor_jumpto_r_c(4, 15);
-  	delete_some_chars(5);
-  	lcd_send_string(time_pm);
+	  char sunset[5];
+	  sprintf(sunset, "%d:%d",HoursSunset,MinutesSunset);
+	  cursor_jumpto_r_c(4, 15);
+	  delet_some_chars(5);
+	  lcd_send_string(&sunset);
+
+
+	  RTC_get_Time_and_Date();
+
+	 char realtime[5];
+	 sprintf(realtime, "%d:%d",myTime.Hours,myTime.Minutes);
+	 cursor_jumpto_r_c(1, 15);
+	 delet_some_chars(5);
+	 lcd_send_string(&realtime);
+
+
+
   }
 
   /* USER CODE END I2C1_Init 2 */
