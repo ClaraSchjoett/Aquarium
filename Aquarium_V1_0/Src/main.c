@@ -188,15 +188,7 @@ int main(void)
 
 	  //sunrise();
 	  //LED_Dimm_Up();
-	  set_RGB(1000,10,0);
-
-
-
-
-
-
-
-
+	  //set_RGB(1000,10,0);
 
 
 	switch (flag) {	 		// Interrupt triggers menu display and enables navigation
@@ -252,9 +244,9 @@ void sunset(void)
 	{
 		if(sunrise_timer<myTime.Seconds)
 		{
-			red=red+25;
-			green=green+8;
-			blue=blue+1;
+			red=red-25;
+			green=green-8;
+			blue=blue-1;
 			set_RGB(red,green,blue);
 		}
 		sunrise_timer=myTime.Seconds;
@@ -267,9 +259,24 @@ void LED_Dimm_Up(void)
 	{
 		if(sunrise_timer<myTime.Seconds)
 		{
-			red=red+10;
-			green=green+3;
-			//blue=blue+1;
+			red=red+50;
+			green=green+16;
+			blue=blue+2;
+			set_RGB(red,green,blue);
+		}
+		sunrise_timer=myTime.Seconds;
+	}
+}
+void LED_Dimm_Down(void)
+{
+	RTC_get_Time_and_Date();
+	if((red<=1000) && (green<=1000) && (blue<=1000))
+	{
+		if(sunrise_timer<myTime.Seconds)
+		{
+			red=red-50;
+			green=green-16;
+			blue=blue-2;
 			set_RGB(red,green,blue);
 		}
 		sunrise_timer=myTime.Seconds;
