@@ -223,7 +223,8 @@ void SysTick_Handler(void)
 void EXTI1_IRQHandler(void)
 {
 	/* USER CODE BEGIN EXTI1_IRQn 0 */
-	*pReason = 2;	// Set flag to one for the switch-case in main
+
+	HAL_TIM_Base_Start_IT(&htim6);
 
 	/* USER CODE END EXTI1_IRQn 0 */
 	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
@@ -301,7 +302,20 @@ void RTC_Alarm_IRQHandler(void)
 	/* USER CODE END RTC_Alarm_IRQn 1 */
 }
 
-/* USER CODE BEGIN 1 */
+/**
+  * @brief This function handles TIM6 global interrupt.
+  */
+void TIM6_DAC_IRQHandler(void)
+{
+	/* USER CODE BEGIN TIM6_DAC_IRQn 0 */
+	*pReason = 2;	// When timer 6 has reached its max value, set flag to 1 for the switch-case in main
+	//HAL_TIM_Base_Stop_IT(&htim6);
 
-/* USER CODE END 1 */
+	/* USER CODE END TIM6_DAC_IRQn 0 */
+	HAL_TIM_IRQHandler(&htim6);
+	/* USER CODE BEGIN TIM6_DAC_IRQn 1 */
+
+	/* USER CODE END TIM6_DAC_IRQn 1 */
+}
+
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

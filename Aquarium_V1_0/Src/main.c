@@ -70,10 +70,7 @@ RTC_TimeTypeDef myTime;
 RTC_DateTypeDef myDate;
 RTC_AlarmTypeDef myAlarm;
 
-TIM_HandleTypeDef htim2;
-TIM_HandleTypeDef htim3;
-TIM_HandleTypeDef htim4;
-TIM_HandleTypeDef htim8;
+
 
 UART_HandleTypeDef huart2;
 
@@ -97,7 +94,7 @@ static void MX_RTC_Init(void);
 static void MX_TIM4_Init(int duty);
 static void MX_TIM3_Init(int duty);
 static void MX_TIM8_Init(int duty);
-static void MX_TIM6_Init(void);
+static void MX_TIM6_Init(void);		// Timer for button debouncing
 static void MX_RTC_Init(void);
 void RTC_get_Time_and_Date(void);
 int8_t read_encoder(void);
@@ -120,7 +117,7 @@ void set_RGB(int red, int green, int blue); //set RGB value for led strip
 int main(void)
 {
 	/* USER CODE BEGIN 1 */
-
+	__disable_irq();
 	/* USER CODE END 1 */
 
 	/* MCU Configuration--------------------------------------------------------*/
@@ -147,6 +144,7 @@ int main(void)
 	MX_TIM3_Init(0);
 	MX_TIM8_Init(0);
 	MX_TIM2_Init(0);
+	MX_TIM6_Init();	// Initialize Timer for button debouncing
 	MX_RTC_Init();
 	/* USER CODE BEGIN 2 */
 
@@ -170,42 +168,41 @@ int main(void)
 	//RTC_get_Time_and_Date();
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
+
+	__enable_irq();
 	while (1)
 	{
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
 		// Test code, delete eventually
-		HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);	// Toggles the onboard LED "LD2" to show program is running
-		HAL_Delay(2000);
+		// HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);	// Toggles the onboard LED "LD2" to show program is running
+		// HAL_Delay(2000);
 
 		switch (*pReason) {	 		// Interrupt triggers menu display and enables navigation
 		case 2:		// Button was the interrupt reason
 			display_timer = myTime.Minutes; // Set timer to current time
 			HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_5); // Turn on LED ring on button
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET); // Turn on display
 			// TODO start menu navigation
 			break;
 		case -1:	// Channel A, CW turning direction
 			display_timer = myTime.Minutes; // Set timer to current time
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET); // Turn on LED ring on button
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET); // Turn on display
 			// TODO start menu navigation
 
 			break;
 		case 1:		// Channel B, CCW turning direction
 			display_timer = myTime.Minutes; // Set timer to current time
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET); // Turn on LED ring on button
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET); // Turn on display
 			// TODO start menu navigation
 			break;
-
+		default:
+			break;
 		}
 		*pReason = 0;				// Reset flag to prepare for a new interrupt
 		RTC_get_Time_and_Date();	// Update time and date
 		if(display_timer != myTime.Minutes){	// If this condition is true, a new minute has begun and we can turn off button LED and display
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET); // Turn off LED ring on button
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET); // Turn off display
 		}
 
 	}
@@ -572,10 +569,14 @@ static void MX_TIM6_Init(void)
 
   /* USER CODE END TIM6_Init 1 */
   htim6.Instance = TIM6;
-  htim6.Init.Prescaler = 840;
+  htim6.Init.Prescaler = 8400;		// Timer frequency set to 10kHz, period = 100us
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim6.Init.Period = 4280;
+  htim6.Init.Period = 0; //65280;
   if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_OnePulse_Init(&htim6, TIM_OPMODE_SINGLE) != HAL_OK)
   {
     Error_Handler();
   }
