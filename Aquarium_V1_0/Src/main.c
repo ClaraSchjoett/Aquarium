@@ -72,6 +72,10 @@ RTC_TimeTypeDef myTime;
 RTC_DateTypeDef myDate;
 RTC_AlarmTypeDef myAlarm;
 
+RTC_TimeTypeDef sunriseTime;
+RTC_TimeTypeDef sunsetTime;
+
+
 
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
@@ -84,15 +88,16 @@ UART_HandleTypeDef huart2;
 int flag = 0;			// Interrupt reason: 0 = button, 1 = rotary channel a; 2 = rotary channel b.
 int *pflag = &flag;		// Enables us to access variable flag in other source files.
 
+int menue_state=1;
+int state=0;
+
 int sunset_timer=0;
 int sunrise_timer=0;
 
-int red_counter=0;
-int green_counter=0;
-int blue_counter=0;
 int red=0;
 int green=0;
 int blue=0;
+int FLbrightness=0;
 
 /* USER CODE END PV */
 
@@ -174,17 +179,17 @@ int main(void)
 
    lcd_init();
 
-   menu_print_cursor (1);
+   menu_print_cursor(1);
 
    menu_print_text();
 
 
 
-   menu_print_cursor(3);
+   //menu_print_cursor(3);
 
-   menu_print_text();
+   //menu_print_text();
 
-   menu_print_cursor(2);
+   //menu_print_cursor(2);
 
 
 
@@ -194,8 +199,8 @@ int main(void)
   /* USER CODE END 2 */
   //Set time, data and alarm
   	//1) Set time
-  	myTime.Hours = 12;
-  	myTime.Minutes = 59;
+  	myTime.Hours = 17;
+  	myTime.Minutes = 20;
   	myTime.Seconds = 45;
   	HAL_RTC_SetTime(&hrtc, &myTime, RTC_FORMAT_BIN);
   	//2) Set date
@@ -209,6 +214,18 @@ int main(void)
   //To get time, data, use this
   	//RTC_get_Time_and_Date();
   /* Infinite loop */
+
+
+  	sunriseTime.Hours = 5;
+  sunriseTime.Minutes = 21;
+
+  	sunsetTime.Hours = 18;
+  	sunsetTime.Minutes = 21;
+
+
+
+
+
   /* USER CODE BEGIN WHILE */
   while (1)
   {
@@ -216,31 +233,64 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-
-	  //sunrise();
-	  //LED_Dimm_Up();
-	  //set_RGB(1000,10,0);
+	  RTC_get_Time_and_Date();
 
 
-	switch (flag) {	 		// Interrupt triggers menu display and enables navigation
-	case 1:
-		// TODO start countdown LCD illuminance timer
-		// TODO start menu navigation
-		break;
-	case 2:
-		// TODO start countdown LCD illuminance timer
-		// TODO start menu navigation
-		break;
-	case 3:
-		// TODO start countdown LCD illuminance timer
-		// TODO start menu navigation
-		break;
-	default:
-		break;
 
-	}
+	  if(sunriseTime.Hours == myTime.Hours){
+		  if(sunriseTime.Minutes == myTime.Minutes){
+			  state=1;
+		  }
+	  }
+	  if(sunsetTime.Hours == myTime.Hours){
+	  	  if(sunsetTime.Minutes == myTime.Minutes){
+	  		  state=2;
+	      }
+	  }
 
-	pflag = 0;
+	  if(sunriseTime.Hours+1 == myTime.Hours){
+		  if(sunriseTime.Minutes == myTime.Minutes){
+			  state=3;
+		  }
+	  }
+	  if(sunsetTime.Hours-1 == myTime.Hours){
+	  	  if(sunsetTime.Minutes == myTime.Minutes){
+	  		  state=4;
+	      }
+	  }
+
+	switch (state) {	 		// Interrupt triggers menu display and enables navigation
+		case 1:
+			sunrise();
+			break;
+		case 2:
+			sunset();
+			break;
+		case 3:
+			LED_Dimm_Down();
+			break;
+		case 4:
+			LED_Dimm_Up();
+			break;
+		default:
+			break;
+		}
+
+	switch (menue_state) {	 		// Interrupt triggers menu display and enables navigation
+		case 1:
+			menu_print_cursor(1);
+			break;
+		case 2:
+			menu_print_cursor(2);
+			break;
+		case 3:
+			menu_print_cursor(3);
+			break;
+
+		default:
+			break;
+		}
+	//pflag = 0;
 
   }
   /* USER CODE END 3 */
@@ -262,6 +312,8 @@ void sunrise(void)
 			red=red+25;
 			green=green+8;
 			blue=blue+1;
+			FLbrightness=FLbrightness+25;
+			set_FL(FLbrightness);
 			set_RGB(red,green,blue);
 		}
 		sunrise_timer=myTime.Seconds;
@@ -278,6 +330,8 @@ void sunset(void)
 			red=red-25;
 			green=green-8;
 			blue=blue-1;
+			FLbrightness=FLbrightness-25;
+			set_FL(FLbrightness);
 			set_RGB(red,green,blue);
 		}
 		sunrise_timer=myTime.Seconds;
@@ -293,6 +347,8 @@ void LED_Dimm_Up(void)
 			red=red+50;
 			green=green+16;
 			blue=blue+2;
+			FLbrightness=FLbrightness+25;
+			set_FL(FLbrightness);
 			set_RGB(red,green,blue);
 		}
 		sunrise_timer=myTime.Seconds;
@@ -301,13 +357,15 @@ void LED_Dimm_Up(void)
 void LED_Dimm_Down(void)
 {
 	RTC_get_Time_and_Date();
-	if((red<=1000) && (green<=1000) && (blue<=1000))
+	if((red>=1) && (green>=1) && (blue>=1))
 	{
 		if(sunrise_timer<myTime.Seconds)
 		{
 			red=red-50;
 			green=green-16;
 			blue=blue-2;
+			FLbrightness=FLbrightness-25;
+			set_FL(FLbrightness);
 			set_RGB(red,green,blue);
 		}
 		sunrise_timer=myTime.Seconds;
