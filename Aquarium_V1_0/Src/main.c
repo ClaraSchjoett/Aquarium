@@ -88,7 +88,7 @@ UART_HandleTypeDef huart2;
 int flag = 0;			// Interrupt reason: 0 = button, 1 = rotary channel a; 2 = rotary channel b.
 int *pflag = &flag;		// Enables us to access variable flag in other source files.
 
-int menue_state=1;
+int menue_state = 1;
 int state=0;
 
 int sunset_timer=0;
@@ -99,6 +99,8 @@ int red=0;
 int green=0;
 int blue=0;
 int FLbrightness=0;
+
+GPIO_PinState button_pressed = GPIO_PIN_RESET;
 
 /* USER CODE END PV */
 
@@ -176,7 +178,7 @@ int main(void)
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
 
-   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
 
    lcd_init();
 
@@ -260,8 +262,6 @@ int main(void)
 		  }
 	  }
 
-
-
 	  if(sunsetTime.Hours == myTime.Hours){
 	  	  if(sunsetTime.Minutes == myTime.Minutes){
 	  		  state=2;
@@ -291,6 +291,23 @@ int main(void)
 			break;
 		}
 
+//	button_pressed = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_1);
+//
+//	if((menue_state == 1) && (button_pressed  == GPIO_PIN_SET)){
+//		menue_state = 2;
+//	}
+//
+//	if((menue_state == 2) && (button_pressed  == GPIO_PIN_SET)){
+//		menue_state = 3;
+//	}
+//
+//	if((menue_state == 3) && (button_pressed  == GPIO_PIN_SET)){
+//		menue_state = 4;
+//	}
+//
+//	if((menue_state == 4) && (button_pressed  == GPIO_PIN_SET)){
+//		menue_state = 1;
+//	}
 
 
 
@@ -310,7 +327,6 @@ int main(void)
 		default:
 			break;
 		}
-	//pflag = 0;
 
   }
   /* USER CODE END 3 */
@@ -947,10 +963,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PC1 */
+  /*Configure GPIO pin : PC1 : Push button in*/
   GPIO_InitStruct.Pin = GPIO_PIN_1;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pins : LD2_Pin PA6 */
