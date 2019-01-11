@@ -73,15 +73,19 @@ extern "C" {
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 int8_t read_encoder(void);
 
+
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
+UART_HandleTypeDef huart2;
+
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim6;
 TIM_HandleTypeDef htim8;
+
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/

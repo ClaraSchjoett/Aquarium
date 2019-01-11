@@ -71,16 +71,14 @@ RTC_DateTypeDef myDate;
 RTC_AlarmTypeDef myAlarm;
 
 
-
-UART_HandleTypeDef huart2;
-
 /* USER CODE BEGIN PV */
-int interruptReason = 0;				// Interrupt reason: 2 = button, -1 = CW rotation, 1 = CCW rotation.
-int *pReason = &interruptReason;		// Enables us to access variable flag in other source files.
-
 uint8_t display_timer;					// Set this timer to current minute value everytime button/rotary is actuated
-static uint8_t old_AB = 0;
+GPIO_PinState interruptReason = 0;				// Interrupt reason: 2 = button, -1 = CW rotation, 1 = CCW rotation.
+GPIO_PinState *pReason = &interruptReason;		// Enables us to access variable flag in other source files.
+uint8_t old_AB = 0;
 
+uint8_t button = 0;
+uint8_t *pbutton = &button;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -97,7 +95,6 @@ static void MX_TIM8_Init(int duty);
 static void MX_TIM6_Init(void);		// Timer for button debouncing
 static void MX_RTC_Init(void);
 void RTC_get_Time_and_Date(void);
-int8_t read_encoder(void);
 /* USER CODE BEGIN PFP */
 static void MX_TIM2_Init(int brightness);
 void set_FL(int brightness);//set brightness of the FL light
@@ -170,39 +167,33 @@ int main(void)
 	/* USER CODE BEGIN WHILE */
 
 	__enable_irq();
+
 	while (1)
 	{
-		/* USER CODE END WHILE */
+		// TODO debouncing
+		interruptReason = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_1);
 
-		/* USER CODE BEGIN 3 */
-		// Test code, delete eventually
-		// HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);	// Toggles the onboard LED "LD2" to show program is running
-		// HAL_Delay(2000);
-
-		switch (*pReason) {	 		// Interrupt triggers menu display and enables navigation
-		case 2:		// Button was the interrupt reason
-			display_timer = myTime.Minutes; // Set timer to current time
-			HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_5); // Turn on LED ring on button
-			// TODO start menu navigation
-			break;
-		case -1:	// Channel A, CW turning direction
-			display_timer = myTime.Minutes; // Set timer to current time
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET); // Turn on LED ring on button
-			// TODO start menu navigation
-
-			break;
-		case 1:		// Channel B, CCW turning direction
-			display_timer = myTime.Minutes; // Set timer to current time
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET); // Turn on LED ring on button
-			// TODO start menu navigation
-			break;
-		default:
-			break;
+		if(interruptReason == GPIO_PIN_SET){
+			HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_5);
 		}
-		*pReason = 0;				// Reset flag to prepare for a new interrupt
+
+//		switch (interruptReason) {	 		// Interrupt triggers menu display and enables navigation
+//		case 1:		// Button was the interrupt reason
+//			display_timer = myTime.Minutes; // Set timer to current time
+//			HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_5);
+//			break;
+//		case -1:	// Channel A, CW turning direction
+//			display_timer = myTime.Minutes; // Set timer to current time
+//			break;
+//		case 2:		// Channel B, CCW turning direction
+//			display_timer = myTime.Minutes; // Set timer to current time
+//			break;
+//		default:
+//			break;
+//		}
+//		*pReason = 0;				// Reset flag to prepare for a new interrupt
 		RTC_get_Time_and_Date();	// Update time and date
 		if(display_timer != myTime.Minutes){	// If this condition is true, a new minute has begun and we can turn off button LED and display
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET); // Turn off LED ring on button
 		}
 
 	}
@@ -559,19 +550,13 @@ static void MX_TIM4_Init(int duty)
 static void MX_TIM6_Init(void)
 {
 
-  /* USER CODE BEGIN TIM6_Init 0 */
-
-  /* USER CODE END TIM6_Init 0 */
-
+	//RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM6, ENABLE);
   TIM_MasterConfigTypeDef sMasterConfig = {0};
 
-  /* USER CODE BEGIN TIM6_Init 1 */
-
-  /* USER CODE END TIM6_Init 1 */
   htim6.Instance = TIM6;
   htim6.Init.Prescaler = 8400;		// Timer frequency set to 10kHz, period = 100us
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim6.Init.Period = 0; //65280;
+  htim6.Init.Period = 200;			// Timer counts 200 cycles, then gives an inpulse (one pulse mode)
   if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
   {
     Error_Handler();
@@ -586,9 +571,6 @@ static void MX_TIM6_Init(void)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN TIM6_Init 2 */
-
-  /* USER CODE END TIM6_Init 2 */
 
 }
 
@@ -664,13 +646,6 @@ static void MX_TIM8_Init(int duty)
 static void MX_USART2_UART_Init(void)
 {
 
-	/* USER CODE BEGIN USART2_Init 0 */
-
-	/* USER CODE END USART2_Init 0 */
-
-	/* USER CODE BEGIN USART2_Init 1 */
-
-	/* USER CODE END USART2_Init 1 */
 	huart2.Instance = USART2;
 	huart2.Init.BaudRate = 115200;
 	huart2.Init.WordLength = UART_WORDLENGTH_8B;
@@ -683,9 +658,6 @@ static void MX_USART2_UART_Init(void)
 	{
 		Error_Handler();
 	}
-	/* USER CODE BEGIN USART2_Init 2 */
-
-	/* USER CODE END USART2_Init 2 */
 
 }
 
@@ -716,13 +688,13 @@ static void MX_GPIO_Init(void)
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
-	/*Configure GPIO pin : PC1. BUTTON */
+	/*Configure GPIO pin : PC1, Push button */
 	GPIO_InitStruct.Pin = GPIO_PIN_1;
 	GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
 	GPIO_InitStruct.Pull = GPIO_PULLDOWN;
 	HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-	/*Configure GPIO pins : LD2_Pin PA6 */
+	/*Configure GPIO pins : LD2_Pin PA6, Onboard LED (green) and one more spare pin, PA6 */
 	GPIO_InitStruct.Pin = LD2_Pin|GPIO_PIN_6;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
@@ -735,10 +707,10 @@ static void MX_GPIO_Init(void)
 	GPIO_InitStruct.Pull = GPIO_PULLUP;
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-	/*Configure GPIO pin : PB5 */
+	/*Configure GPIO pin : PB5, LED Ring on push button*/
 	GPIO_InitStruct.Pin = GPIO_PIN_5;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Pull = GPIO_PULLDOWN;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
