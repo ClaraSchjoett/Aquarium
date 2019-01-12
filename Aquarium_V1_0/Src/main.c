@@ -233,23 +233,28 @@ int main(void)
 
 		button_pressed = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_1);
 
-		if((menue_state == 1) && (button_pressed  == GPIO_PIN_SET)){
-			menue_state = 2;
+		switch (menue_state){ 			//Change menue state if button is pushed
+		case 1:
+			if(button_pressed  == GPIO_PIN_SET){
+				menue_state = 2;
+			}
+			break;
+		case 2:
+			if(button_pressed  == GPIO_PIN_SET){
+				menue_state = 3;
+			}
+			break;
+		case 3:
+			if(button_pressed  == GPIO_PIN_SET){
+				menue_state = 4;
+			}
+			break;
+		case 4:
+			if(button_pressed  == GPIO_PIN_SET){
+				menue_state = 1;
+			}
+			break;
 		}
-		//
-		//	if((menue_state == 2) && (button_pressed  == GPIO_PIN_SET)){
-		//		menue_state = 3;
-		//	}
-		//
-		//	if((menue_state == 3) && (button_pressed  == GPIO_PIN_SET)){
-		//		menue_state = 4;
-		//	}
-		//
-		//	if((menue_state == 4) && (button_pressed  == GPIO_PIN_SET)){
-		//		menue_state = 1;
-		//	}
-
-
 
 		switch (menue_state) {	 		// Interrupt triggers menu display and enables navigation
 		case 1:
