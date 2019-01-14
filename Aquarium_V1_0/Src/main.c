@@ -68,8 +68,9 @@ TIM_HandleTypeDef htim8;
 
 UART_HandleTypeDef huart2;
 
-int flag = 0;			// Interrupt reason: 0 = button, 1 = rotary channel a; 2 = rotary channel b.
-int *pflag = &flag;		// Enables us to access variable flag in other source files.
+int ITreason = 0;				// Interrupt reason: 0 = button, 1 = rotary channel a; 2 = rotary channel b.
+int *pITreason = &ITreason;		// Enables us to access variable flag in other source files.
+uint8_t old_AB = 0;
 
 int menue_state = 1;
 int state=0;
@@ -108,6 +109,7 @@ void sunrise(void);
 void sunset(void);
 void LED_Dimm_Up(void);
 void LED_Dimm_Down(void);
+
 
 /* Private user code ---------------------------------------------------------*/
 
@@ -233,7 +235,7 @@ int main(void)
 
 		button_pressed = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_1);
 
-		switch (menue_state){ 			//Change menue state if button is pushed
+		switch (menue_state){ 			//Change menu state if button is pushed
 		case 1:
 			if(button_pressed  == GPIO_PIN_SET){
 				menue_state = 2;
@@ -392,6 +394,26 @@ void RTC_get_Time_and_Date(void)
 	HAL_RTC_GetTime(&hrtc, &myTime, RTC_FORMAT_BIN);
 	//2)Get data
 	HAL_RTC_GetDate(&hrtc, &myDate, RTC_FORMAT_BIN);
+}
+
+/**
+ * @brief Read new encoder state and decide turning direction
+ * @param None
+ * @retval 8bit unsigned integer. 0 for no rotation, -1 for CCW rotation, 1 for CW rotation.
+ */
+int8_t read_encoder(void)
+{
+	static int8_t enc_states[] = {0,-1,1,0,1,0,0,-1,-1,0,0,1,0,1,-1,0}; // LUT for rotation direction
+	uint8_t encAB = 0x00;
+	old_AB = old_AB << 2;                   	//remember previous state on the positions bit no. 2 and 3 (bit 0 is first element)
+	if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_8) == GPIO_PIN_SET){ 	// If channel A is high level, bit no. 1 is set
+		encAB = encAB | (0x01 << 1);
+	}
+	if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_9) == GPIO_PIN_SET){	// If channel B is high level, bit no. 0 is set
+		encAB = encAB | (0x01 << 0);
+	}
+	old_AB = (old_AB | ( encAB & 0x03 ));  		//add current state without deleting previous state
+	return ( enc_states[( old_AB & 0x0f )]);	//Pick out the corresponding element in the LUT
 }
 
 /**
