@@ -84,6 +84,10 @@ int green=0;
 int blue=0;
 int FLbrightness=0;
 
+
+uint8_t  u8Sample;
+uint8_t  u8SampleLast;
+
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
@@ -147,13 +151,6 @@ int main(void)
 
 	GPIO_PinState button_pressed = GPIO_PIN_RESET;
 
-	//menu_print_cursor(3);
-
-	//menu_print_text();
-
-	//menu_print_cursor(2);
-
-	//HAL_I2C_Master_Transmit(&hi2c1, 0x4F, 0x01, 1, 10);
 
 	//Set time, data and alarm
 	//1) Set time
@@ -179,8 +176,7 @@ int main(void)
 	sunsetTime.Hours = 18;
 	sunsetTime.Minutes = 21;
 
-	//set_RGB(1000,0,0);
-
+	/* Infinite loop */
 	while (1)
 	{
 
@@ -216,7 +212,7 @@ int main(void)
 			}
 		}
 
-		switch (state) {	 		// Interrupt triggers menu display and enables navigation
+		switch (state) {	 		//taeglicher zyklus mit stateevent
 		case 1:
 			sunrise();
 			break;
@@ -234,32 +230,38 @@ int main(void)
 			break;
 		}
 
-		button_pressed = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_1);
+
+		//taster auslesen (positive flankentriggerung)
+		u8Sample = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_1);
+		button_pressed=0;
+		if((u8Sample != 0) && (u8SampleLast == 0)){
+		  button_pressed=1;
+		}
+		u8SampleLast = u8Sample;
+
 
 		switch (menue_state){ 			//Change menu state if button is pushed
 		case 1:
-
 			if(button_pressed  == GPIO_PIN_SET){
 				menue_state = 2;
 				menu_print_cursor(2);
 			}
 			break;
 		case 2:
-
 			if(button_pressed  == GPIO_PIN_SET){
 				menue_state = 3;
 				menu_print_cursor(3);
 			}
+
+			//read_encoder();
 			break;
 		case 3:
-
 			if(button_pressed  == GPIO_PIN_SET){
 				menue_state = 4;
 				menu_print_cursor(4);
 			}
 			break;
 		case 4:
-
 			if(button_pressed  == GPIO_PIN_SET){
 				menue_state = 1;
 				menu_print_cursor(1);
@@ -267,23 +269,7 @@ int main(void)
 			break;
 		}
 
-/*		switch (menue_state) {	 		// Interrupt triggers menu display and enables navigation
-		case 1:
-			menu_print_cursor(1);
-			break;
-		case 2:
-			menu_print_cursor(2);
-			break;
-		case 3:
-			menu_print_cursor(3);
-			break;
-		case 4:
-			menu_print_cursor(4);
-			break;
-		default:
-			break;
-		}*/
-
+		HAL_Delay(20);//entprellen des tasters
 	}
 }
 
