@@ -185,11 +185,12 @@ int main(void)
 	{
 
 		RTC_get_Time_and_Date();
-
+		//zeit anzeigen
 		if(display_timer!=myTime.Minutes){
 			menu_print_time(sunriseTime.Hours,sunriseTime.Minutes,sunsetTime.Hours,sunsetTime.Minutes);
 			display_timer=myTime.Minutes;
 		}
+
 
 
 
@@ -237,28 +238,36 @@ int main(void)
 
 		switch (menue_state){ 			//Change menu state if button is pushed
 		case 1:
+
 			if(button_pressed  == GPIO_PIN_SET){
 				menue_state = 2;
+				menu_print_cursor(2);
 			}
 			break;
 		case 2:
+
 			if(button_pressed  == GPIO_PIN_SET){
 				menue_state = 3;
+				menu_print_cursor(3);
 			}
 			break;
 		case 3:
+
 			if(button_pressed  == GPIO_PIN_SET){
 				menue_state = 4;
+				menu_print_cursor(4);
 			}
 			break;
 		case 4:
+
 			if(button_pressed  == GPIO_PIN_SET){
 				menue_state = 1;
+				menu_print_cursor(1);
 			}
 			break;
 		}
 
-		switch (menue_state) {	 		// Interrupt triggers menu display and enables navigation
+/*		switch (menue_state) {	 		// Interrupt triggers menu display and enables navigation
 		case 1:
 			menu_print_cursor(1);
 			break;
@@ -273,7 +282,7 @@ int main(void)
 			break;
 		default:
 			break;
-		}
+		}*/
 
 	}
 }
