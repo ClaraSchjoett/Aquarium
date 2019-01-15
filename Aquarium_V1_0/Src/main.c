@@ -74,6 +74,7 @@ uint8_t old_AB = 0;
 
 int menue_state = 1;
 int state=0;
+int button_pressed=0;
 
 int sunset_timer=0;
 int sunrise_timer=0;
@@ -146,15 +147,13 @@ int main(void)
 	MX_TIM2_Init(0);
 	MX_RTC_Init();
 
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
 
 	lcd_init();
-
 	menu_print_cursor(1);
-
 	menu_print_text();
 
-	GPIO_PinState button_pressed = GPIO_PIN_RESET;
+
 
 
 	//Set time, data and alarm
@@ -241,24 +240,31 @@ int main(void)
 		u8SampleButton = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_1);
 		if((u8SampleButton != 0) && (u8SampleLastButton == 0)){
 		  button_pressed=1;
+		  //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1,GPIO_PIN_SET);
 		}
 		u8SampleLastButton = u8SampleButton;
 
-
-		encoder_val=read_encoder();
-		if(encoder_val != 0)
+		if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_1)==1)//wenn taste gedrueckt ledring an
 		{
-			HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_5);
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+		}
+		else//sonst aus
+		{
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5,GPIO_PIN_RESET);
 		}
 
+
+		encoder_val=read_encoder();
+
+		//menue state machine
 		switch (menue_state){ 			//Change menu state if button is pushed
-		case 1:
+		case 1://running...
 			if(button_pressed  == GPIO_PIN_SET){
 				menue_state = 2;
 				menu_print_cursor(2);
 			}
 			break;
-		case 2:
+		case 2://TIME
 			if(button_pressed  == GPIO_PIN_SET){
 				menue_state = 3;
 				menu_print_cursor(3);
@@ -294,7 +300,7 @@ int main(void)
 					menu_print_time(sunriseTime.Hours,sunriseTime.Minutes,sunsetTime.Hours,sunsetTime.Minutes);
 			}
 			break;
-		case 3:
+		case 3://SUNRISE
 			if(button_pressed  == GPIO_PIN_SET){
 				menue_state = 4;
 				menu_print_cursor(4);
@@ -328,7 +334,7 @@ int main(void)
 					menu_print_time(sunriseTime.Hours,sunriseTime.Minutes,sunsetTime.Hours,sunsetTime.Minutes);
 			}
 			break;
-		case 4:
+		case 4://SUNSET
 			if(button_pressed  == GPIO_PIN_SET){
 				menue_state = 1;
 				menu_print_cursor(1);
@@ -387,9 +393,9 @@ void set_RGB(int red, int green, int blue)
 void sunrise(void)
 {
 	RTC_get_Time_and_Date();
-	if((red<=1000) && (green<=1000) && (blue<=1000))
+	if((red<=1000) && (green<=1000) && (blue<=1000) && (FLbrightness<=1000))//nur dimmen wenn max helligkeit noch nicht erreicht
 	{
-		if(sunrise_timer!=myTime.Seconds)
+		if(sunrise_timer!=myTime.Seconds)//jede sekunde
 		{
 			red=red+25;
 			green=green+8;
@@ -399,7 +405,6 @@ void sunrise(void)
 			set_RGB(red,green,blue);
 			sunrise_timer=myTime.Seconds;
 		}
-
 	}
 }
 
@@ -411,14 +416,27 @@ void sunrise(void)
 void sunset(void)
 {
 	RTC_get_Time_and_Date();
-	if((red>=1) && (green>=1) && (blue>=1))
+	if((red>=25) && (green>=8) && (blue>=1) && (FLbrightness>=25))//nur dimmen wenn die Led noch leuchten
 	{
-		if(sunrise_timer!=myTime.Seconds)
+		if(sunrise_timer!=myTime.Seconds)//jede sekunde
 		{
 			red=red-25;
 			green=green-8;
 			blue=blue-1;
 			FLbrightness=FLbrightness-25;
+			set_FL(FLbrightness);
+			set_RGB(red,green,blue);
+			sunrise_timer=myTime.Seconds;
+		}
+	}
+	else //unterlauf der variablen fuer die helligkeit abfangen
+	{
+		if(sunrise_timer!=myTime.Seconds)//jede sekunde
+		{
+			red=0;
+			green=0;
+			blue=0;
+			FLbrightness=0;
 			set_FL(FLbrightness);
 			set_RGB(red,green,blue);
 			sunrise_timer=myTime.Seconds;
@@ -434,14 +452,14 @@ void sunset(void)
 void LED_Dimm_Up(void)
 {
 	RTC_get_Time_and_Date();
-	if((red<=1000) && (green<=1000) && (blue<=1000))
+	if((red<=1000) && (green<=1000) && (blue<=1000))//nur dimmen wenn max helligkeit noch nicht erreicht
 	{
-		if(sunrise_timer!=myTime.Seconds)
+		if(sunrise_timer!=myTime.Seconds)//jede sekunde
 		{
 			red=red+50;
 			green=green+16;
 			blue=blue+2;
-			FLbrightness=FLbrightness+25;
+			FLbrightness=FLbrightness+50;
 			set_FL(FLbrightness);
 			set_RGB(red,green,blue);
 			sunrise_timer=myTime.Seconds;
@@ -457,14 +475,27 @@ void LED_Dimm_Up(void)
 void LED_Dimm_Down(void)
 {
 	RTC_get_Time_and_Date();
-	if((red>=1) && (green>=1) && (blue>=1))
+	if((red>=50) && (green>=16) && (blue>=2) && (FLbrightness>=25)) //nur dimmen wenn die Led noch leuchten
 	{
-		if(sunrise_timer!=myTime.Seconds)
+		if(sunrise_timer!=myTime.Seconds)//jede sekunde
 		{
-			red=red-200;
+			red=red-50;
 			green=green-16;
 			blue=blue-2;
-			FLbrightness=FLbrightness-25;
+			FLbrightness=FLbrightness-50;
+			set_FL(FLbrightness);
+			set_RGB(red,green,blue);
+			sunrise_timer=myTime.Seconds;
+		}
+	}
+	else	//unterlauf der variablen fuer die helligkeit abfangen
+	{
+		if(sunrise_timer!=myTime.Seconds)//jede sekunde
+		{
+			red=0;
+			green=0;
+			blue=0;
+			FLbrightness=0;
 			set_FL(FLbrightness);
 			set_RGB(red,green,blue);
 			sunrise_timer=myTime.Seconds;
