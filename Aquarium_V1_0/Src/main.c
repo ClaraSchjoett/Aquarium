@@ -84,9 +84,14 @@ int green=0;
 int blue=0;
 int FLbrightness=0;
 
+uint8_t  u8SampleButton=0;
+uint8_t  u8SampleLastButton=0;
 
-uint8_t  u8Sample;
-uint8_t  u8SampleLast;
+int8_t encoder_val=0;
+uint8_t  u8SampleEncA=0;
+uint8_t  u8SampleLastEncA=0;
+uint8_t  u8SampleEncB=0;
+uint8_t  u8SampleLastEncB=0;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -154,7 +159,7 @@ int main(void)
 
 	//Set time, data and alarm
 	//1) Set time
-	myTime.Hours = 6;
+	myTime.Hours = 17;
 	myTime.Minutes = 20;
 	myTime.Seconds = 45;
 	HAL_RTC_SetTime(&hrtc, &myTime, RTC_FORMAT_BIN);
@@ -170,7 +175,7 @@ int main(void)
 	//RTC_get_Time_and_Date();
 	/* Infinite loop */
 
-	sunriseTime.Hours = 6;
+	sunriseTime.Hours = 8;
 	sunriseTime.Minutes = 21;
 
 	sunsetTime.Hours = 18;
@@ -232,13 +237,19 @@ int main(void)
 
 
 		//taster auslesen (positive flankentriggerung)
-		u8Sample = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_1);
 		button_pressed=0;
-		if((u8Sample != 0) && (u8SampleLast == 0)){
+		u8SampleButton = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_1);
+		if((u8SampleButton != 0) && (u8SampleLastButton == 0)){
 		  button_pressed=1;
 		}
-		u8SampleLast = u8Sample;
+		u8SampleLastButton = u8SampleButton;
 
+
+		encoder_val=read_encoder();
+		if(encoder_val != 0)
+		{
+			HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_5);
+		}
 
 		switch (menue_state){ 			//Change menu state if button is pushed
 		case 1:
@@ -252,13 +263,69 @@ int main(void)
 				menue_state = 3;
 				menu_print_cursor(3);
 			}
-
-			//read_encoder();
+			if(encoder_val == 1)
+			{
+				myTime.Minutes = myTime.Minutes+1;
+				if(myTime.Minutes >= 60)
+				{
+					myTime.Hours = myTime.Hours+1;
+					myTime.Minutes = 0;
+					if(myTime.Hours >= 25)
+					{
+						myTime.Hours = 0;
+					}
+				}
+				HAL_RTC_SetTime(&hrtc, &myTime, RTC_FORMAT_BIN);
+				menu_print_time(sunriseTime.Hours,sunriseTime.Minutes,sunsetTime.Hours,sunsetTime.Minutes);
+			}
+			if(encoder_val == -1)
+			{
+				myTime.Minutes = myTime.Minutes-1;
+					if(myTime.Minutes >= 60)
+					{
+						myTime.Hours = myTime.Hours-1;
+						myTime.Minutes = 59;
+						if(myTime.Hours >= 25)
+						{
+							myTime.Hours = 24;
+						}
+					}
+					HAL_RTC_SetTime(&hrtc, &myTime, RTC_FORMAT_BIN);
+					menu_print_time(sunriseTime.Hours,sunriseTime.Minutes,sunsetTime.Hours,sunsetTime.Minutes);
+			}
 			break;
 		case 3:
 			if(button_pressed  == GPIO_PIN_SET){
 				menue_state = 4;
 				menu_print_cursor(4);
+			}
+			if(encoder_val == 1)
+			{
+				sunriseTime.Minutes = sunriseTime.Minutes+1;
+				if(sunriseTime.Minutes >= 60)
+				{
+					sunriseTime.Hours = sunriseTime.Hours+1;
+					sunriseTime.Minutes = 0;
+					if(sunriseTime.Hours >= 25)
+					{
+						sunriseTime.Hours = 0;
+					}
+				}
+				menu_print_time(sunriseTime.Hours,sunriseTime.Minutes,sunsetTime.Hours,sunsetTime.Minutes);
+			}
+			if(encoder_val == -1)
+			{
+				sunriseTime.Minutes = sunriseTime.Minutes-1;
+					if(sunriseTime.Minutes >= 60)
+					{
+						sunriseTime.Hours = sunriseTime.Hours-1;
+						sunriseTime.Minutes = 59;
+						if(sunriseTime.Hours >= 25)
+						{
+							sunriseTime.Hours = 24;
+						}
+					}
+					menu_print_time(sunriseTime.Hours,sunriseTime.Minutes,sunsetTime.Hours,sunsetTime.Minutes);
 			}
 			break;
 		case 4:
@@ -266,10 +333,37 @@ int main(void)
 				menue_state = 1;
 				menu_print_cursor(1);
 			}
+			if(encoder_val == 1)
+			{
+				sunsetTime.Minutes = sunsetTime.Minutes+1;
+				if(sunsetTime.Minutes >= 60)
+				{
+					sunsetTime.Hours = sunsetTime.Hours+1;
+					sunsetTime.Minutes = 0;
+					if(sunsetTime.Hours >= 25)
+					{
+						sunsetTime.Hours = 0;
+					}
+				}
+				menu_print_time(sunriseTime.Hours,sunriseTime.Minutes,sunsetTime.Hours,sunsetTime.Minutes);
+			}
+			if(encoder_val == -1)
+			{
+				sunsetTime.Minutes = sunsetTime.Minutes-1;
+					if(sunsetTime.Minutes >= 60)
+					{
+						sunsetTime.Hours = sunsetTime.Hours-1;
+						sunsetTime.Minutes = 59;
+						if(sunsetTime.Hours >= 25)
+						{
+							sunsetTime.Hours = 24;
+						}
+					}
+					menu_print_time(sunriseTime.Hours,sunriseTime.Minutes,sunsetTime.Hours,sunsetTime.Minutes);
+			}
 			break;
 		}
-
-		HAL_Delay(20);//entprellen des tasters
+		HAL_Delay(10);//entprellen des tasters
 	}
 }
 
@@ -577,13 +671,13 @@ void menu_print_text (void)
 void menu_print_time (uint8_t HoursSunrise, uint8_t MinutesSunrise,uint8_t HoursSunset, uint8_t MinutesSunset)
 {
 	char sunrise[5];
-	sprintf(sunrise, "%2d:%2d",HoursSunrise,MinutesSunrise);
+	sprintf(sunrise, "%02d:%02d",HoursSunrise,MinutesSunrise);
 	cursor_jumpto_r_c(3, 15);
 	//delete_some_chars(5);
 	lcd_send_string(&sunrise);
 
 	char sunset[5];
-	sprintf(sunset, "%2d:%2d",HoursSunset,MinutesSunset);
+	sprintf(sunset, "%02d:%02d",HoursSunset,MinutesSunset);
 	cursor_jumpto_r_c(4, 15);
 	//delete_some_chars(5);
 	lcd_send_string(&sunset);
@@ -592,7 +686,7 @@ void menu_print_time (uint8_t HoursSunrise, uint8_t MinutesSunrise,uint8_t Hours
 	RTC_get_Time_and_Date();
 
 	char realtime[5];
-	sprintf(realtime, "%2d:%2d",myTime.Hours,myTime.Minutes);
+	sprintf(realtime, "%02d:%02d",myTime.Hours,myTime.Minutes);
 	cursor_jumpto_r_c(2, 15);
 	//delete_some_chars(5);
 	lcd_send_string(&realtime);

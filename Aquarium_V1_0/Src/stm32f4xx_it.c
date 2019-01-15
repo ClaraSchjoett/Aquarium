@@ -194,11 +194,7 @@ void SysTick_Handler(void)
  */
 void EXTI1_IRQHandler(void)
 {
-
-	*pITreason = 2;
-
 	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
-
 }
 
 /**
@@ -207,11 +203,11 @@ void EXTI1_IRQHandler(void)
 void EXTI9_5_IRQHandler(void)
 {
 
-	*pITreason = read_encoder();
+	//*pITreason = read_encoder();
 
-	  if(__HAL_GPIO_EXTI_GET_FLAG(GPIO_PIN_8)){
-		  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_5);
-	  }
+	  //if(__HAL_GPIO_EXTI_GET_FLAG(GPIO_PIN_8)){
+		  //HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_5);
+	  //}
 
 //	  if(__HAL_GPIO_EXTI_GET_FLAG(GPIO_PIN_9)){
 //	  }
