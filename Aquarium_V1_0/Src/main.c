@@ -68,31 +68,31 @@ TIM_HandleTypeDef htim8;
 
 UART_HandleTypeDef huart2;
 
-int ITreason = 0;				// Interrupt reason: 0 = button, 1 = rotary channel a; 2 = rotary channel b.
-int *pITreason = &ITreason;		// Enables us to access variable flag in other source files.
+int ITreason = 0;				// Interrupt reason. Variable not used in this version.
+int *pITreason = &ITreason;		// Enables us to access variable ITreason in other source files.
 uint8_t old_AB = 0;
 
-int menue_state = 1;
-int state=0;
-int button_pressed=0;
+int menue_state = 1;			// 4 possible states. Menu contains 4 lines on LCD display.
+int state = 0;					// Sunrise, sunset or neither
+int button_pressed = 0;
 
-int sunset_timer=0;
-int sunrise_timer=0;
-int display_timer=0;
+int sunset_timer = 0;
+int sunrise_timer = 0;
+int display_timer = 0;			// Minute display 
 
-int red=0;
-int green=0;
-int blue=0;
-int FLbrightness=0;
+int red = 0;
+int green = 0;
+int blue = 0;
+int FLbrightness = 0;
 
-uint8_t  u8SampleButton=0;
-uint8_t  u8SampleLastButton=0;
+uint8_t  u8SampleButton = 0;
+uint8_t  u8SampleLastButton = 0;
 
-int8_t encoder_val=0;
-uint8_t  u8SampleEncA=0;
-uint8_t  u8SampleLastEncA=0;
-uint8_t  u8SampleEncB=0;
-uint8_t  u8SampleLastEncB=0;
+int8_t encoder_val = 0;
+uint8_t  u8SampleEncA = 0;		// Variable not used.
+uint8_t  u8SampleLastEncA = 0;	// Variable not used.
+uint8_t  u8SampleEncB = 0;		// Variable not used.
+uint8_t  u8SampleLastEncB = 0;	// Variable not used.
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -115,10 +115,11 @@ void menu_print_cursor (int linenumber);
 void menu_print_text (void);
 void menu_print_time (uint8_t HoursSunrise, uint8_t MinutesSunrise,uint8_t HoursSunset, uint8_t MinutesSunset);
 
-void sunrise(void);
-void sunset(void);
-void LED_Dimm_Up(void);
-void LED_Dimm_Down(void);
+void sunrise(void);			// Simulates sunrise
+void sunset(void);			// Simulates sunset
+// These functions are necessary because we avoid any sudden light changes
+void LED_Dimm_Up(void);		// Turns on LED strip and FL to enable sunset simulation
+void LED_Dimm_Down(void);	// Turns off LED strip and FL after sunrise simulation
 
 
 /* Private user code ---------------------------------------------------------*/
@@ -148,13 +149,9 @@ int main(void)
 	MX_RTC_Init();
 
 	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
-
 	lcd_init();
 	menu_print_cursor(1);
 	menu_print_text();
-
-
-
 
 	//Set time, data and alarm
 	//1) Set time
@@ -193,24 +190,24 @@ int main(void)
 
 
 
-
-		if(sunriseTime.Hours == myTime.Hours){
+		// FSM 
+		if(sunriseTime.Hours == myTime.Hours){			// Check if the current time equals the set sunrise time.
 			if(sunriseTime.Minutes == myTime.Minutes){
 				state=1;
 			}
 		}
-		if(sunriseTime.Hours+1 == myTime.Hours){
+		if(sunriseTime.Hours+1 == myTime.Hours){		// Check if the current time equals the quick dim-down time.
 			if(sunriseTime.Minutes == myTime.Minutes){
 				state=3;
 			}
 		}
 
-		if(sunsetTime.Hours == myTime.Hours){
+		if(sunsetTime.Hours == myTime.Hours){			// Check if the current time equals the set sunset time.
 			if(sunsetTime.Minutes == myTime.Minutes){
 				state=2;
 			}
 		}
-		if(sunsetTime.Hours-1 == myTime.Hours){
+		if(sunsetTime.Hours-1 == myTime.Hours){			// Check if the current time equals the quick turn-on time.
 			if(sunsetTime.Minutes == myTime.Minutes){
 				state=4;
 			}
