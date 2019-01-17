@@ -150,14 +150,14 @@ int main(void)
 
 	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
 	lcd_init();
-	menu_print_cursor(1);
 	menu_print_text();
+	menue_state = 1;
 
 	//Set time, data and alarm
 	//1) Set time
-	myTime.Hours = 17;
-	myTime.Minutes = 20;
-	myTime.Seconds = 45;
+	myTime.Hours = 7;
+	myTime.Minutes = 59;
+	myTime.Seconds = 30;
 	HAL_RTC_SetTime(&hrtc, &myTime, RTC_FORMAT_BIN);
 	//2) Set date
 	myDate.Date = 6;
@@ -167,15 +167,13 @@ int main(void)
 	HAL_RTC_SetDate(&hrtc, &myDate, RTC_FORMAT_BIN);
 	//3)Set alarm
 
-	//To get time, data, use this
-	//RTC_get_Time_and_Date();
 	/* Infinite loop */
-
+	//default times
 	sunriseTime.Hours = 8;
-	sunriseTime.Minutes = 21;
+	sunriseTime.Minutes = 0;
 
 	sunsetTime.Hours = 18;
-	sunsetTime.Minutes = 21;
+	sunsetTime.Minutes = 0;
 
 	/* Infinite loop */
 	while (1)
@@ -190,10 +188,10 @@ int main(void)
 
 
 
-		// FSM 
+
 		if(sunriseTime.Hours == myTime.Hours){			// Check if the current time equals the set sunrise time.
 			if(sunriseTime.Minutes == myTime.Minutes){
-				state=1;
+				state=1;//sunrise state
 			}
 		}
 		if(sunriseTime.Hours+1 == myTime.Hours){		// Check if the current time equals the quick dim-down time.
@@ -237,9 +235,9 @@ int main(void)
 		u8SampleButton = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_1);
 		if((u8SampleButton != 0) && (u8SampleLastButton == 0)){
 		  button_pressed=1;
-		  //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1,GPIO_PIN_SET);
 		}
 		u8SampleLastButton = u8SampleButton;
+
 
 		if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_1)==1)//wenn taste gedrueckt ledring an
 		{
@@ -256,7 +254,7 @@ int main(void)
 		//menue state machine
 		switch (menue_state){ 			//Change menu state if button is pushed
 		case 1://running...
-			if(button_pressed  == GPIO_PIN_SET){
+			if(button_pressed == GPIO_PIN_SET){
 				menue_state = 2;
 				menu_print_cursor(2);
 			}
@@ -273,7 +271,7 @@ int main(void)
 				{
 					myTime.Hours = myTime.Hours+1;
 					myTime.Minutes = 0;
-					if(myTime.Hours >= 25)
+					if(myTime.Hours >= 24)
 					{
 						myTime.Hours = 0;
 					}
@@ -288,12 +286,12 @@ int main(void)
 					{
 						myTime.Hours = myTime.Hours-1;
 						myTime.Minutes = 59;
-						if(myTime.Hours >= 25)
+						if(myTime.Hours >= 24)
 						{
-							myTime.Hours = 24;
+							myTime.Hours = 23;
 						}
 					}
-					HAL_RTC_SetTime(&hrtc, &myTime, RTC_FORMAT_BIN);
+					HAL_RTC_SetTime(&hrtc, &myTime, RTC_FORMAT_BIN);//myTime in RTC schreiben
 					menu_print_time(sunriseTime.Hours,sunriseTime.Minutes,sunsetTime.Hours,sunsetTime.Minutes);
 			}
 			break;
@@ -309,7 +307,7 @@ int main(void)
 				{
 					sunriseTime.Hours = sunriseTime.Hours+1;
 					sunriseTime.Minutes = 0;
-					if(sunriseTime.Hours >= 25)
+					if(sunriseTime.Hours >= 24)
 					{
 						sunriseTime.Hours = 0;
 					}
@@ -323,9 +321,9 @@ int main(void)
 					{
 						sunriseTime.Hours = sunriseTime.Hours-1;
 						sunriseTime.Minutes = 59;
-						if(sunriseTime.Hours >= 25)
+						if(sunriseTime.Hours >= 24)
 						{
-							sunriseTime.Hours = 24;
+							sunriseTime.Hours = 23;
 						}
 					}
 					menu_print_time(sunriseTime.Hours,sunriseTime.Minutes,sunsetTime.Hours,sunsetTime.Minutes);
@@ -343,7 +341,7 @@ int main(void)
 				{
 					sunsetTime.Hours = sunsetTime.Hours+1;
 					sunsetTime.Minutes = 0;
-					if(sunsetTime.Hours >= 25)
+					if(sunsetTime.Hours >= 24)
 					{
 						sunsetTime.Hours = 0;
 					}
@@ -357,9 +355,9 @@ int main(void)
 					{
 						sunsetTime.Hours = sunsetTime.Hours-1;
 						sunsetTime.Minutes = 59;
-						if(sunsetTime.Hours >= 25)
+						if(sunsetTime.Hours >= 24)
 						{
-							sunsetTime.Hours = 24;
+							sunsetTime.Hours = 23;
 						}
 					}
 					menu_print_time(sunriseTime.Hours,sunriseTime.Minutes,sunsetTime.Hours,sunsetTime.Minutes);
@@ -389,6 +387,7 @@ void set_RGB(int red, int green, int blue)
  */
 void sunrise(void)
 {
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10,GPIO_PIN_SET);//relais fuer FL ein
 	RTC_get_Time_and_Date();
 	if((red<=1000) && (green<=1000) && (blue<=1000) && (FLbrightness<=1000))//nur dimmen wenn max helligkeit noch nicht erreicht
 	{
@@ -438,6 +437,7 @@ void sunset(void)
 			set_RGB(red,green,blue);
 			sunrise_timer=myTime.Seconds;
 		}
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10,GPIO_PIN_RESET);
 	}
 }
 
@@ -448,6 +448,7 @@ void sunset(void)
  */
 void LED_Dimm_Up(void)
 {
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10,GPIO_PIN_SET);
 	RTC_get_Time_and_Date();
 	if((red<=1000) && (green<=1000) && (blue<=1000))//nur dimmen wenn max helligkeit noch nicht erreicht
 	{
@@ -497,6 +498,7 @@ void LED_Dimm_Down(void)
 			set_RGB(red,green,blue);
 			sunrise_timer=myTime.Seconds;
 		}
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10,GPIO_PIN_RESET);
 	}
 }
 
