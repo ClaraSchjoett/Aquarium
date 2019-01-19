@@ -1,0 +1,4 @@
+.global menu_print_cursor
+.extern	cursor_jumpto_r_c			// This function moves the cursor to row x and column y
+.extern delete_some_char			//	Delete x chars
+.extern lcd_send_string				// Print text on LCD

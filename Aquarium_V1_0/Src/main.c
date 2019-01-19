@@ -111,7 +111,7 @@ static void MX_TIM2_Init(int brightness);
 void set_FL(int brightness);				//set brightness of the FL light
 void set_RGB(int red, int green, int blue); //set RGB value for led strip
 
-void menu_print_cursor (int linenumber);
+//void menu_print_cursor (int linenumber);
 void menu_print_text (void);
 void menu_print_time (uint8_t HoursSunrise, uint8_t MinutesSunrise,uint8_t HoursSunset, uint8_t MinutesSunset);
 
@@ -617,6 +617,7 @@ static void MX_I2C1_Init(void)
  * @param Gewuenschte Position
  * @retval None
  */
+/*
 void menu_print_cursor (int linenumber)
 {
 	switch(linenumber){
@@ -662,6 +663,7 @@ void menu_print_cursor (int linenumber)
 		break;
 	}
 }
+*/
 
 /**
  * @brief Gibt den Text aus der aendert sich nicht daher braucht sie keine Uebergabewerte

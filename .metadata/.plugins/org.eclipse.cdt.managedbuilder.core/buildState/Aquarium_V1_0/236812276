@@ -1,8 +1,0 @@
-#
-#Thu Jan 10 09:59:40 CET 2019
-Aquarium_V1_0.elf=1
-Debug/Aquarium_V1_0.elf=1
-Debug/Src/main.o=1
-Src/main.c=1
-STM32F446RE_FLASH.ld=1
-Debug/Aquarium_V1_0=1

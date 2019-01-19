@@ -1,0 +1,33 @@
+.global menu_print_cursor2
+.extern	cursor_jumpto_r_c			// This function moves the cursor to row x and column y
+.extern delete_some_char			//	Delete x chars
+.extern lcd_send_string				// Print text on LCD
+
+.thumb
+.text
+.align
+
+// User Code begin here//
+
+menu_print_cursor2:
+	PUSH	{lr}
+	cmp		r0, #1					//Switch case 1,2,3,4
+	BEQ		case_1
+	cmp		r0, #2
+	BEQ		case_2
+	cmp		r0, #3
+	BEQ		case_3
+	cmp		r0, #4
+	BEQ		case_4
+
+
+case_1:
+	BL break
+case_2:
+case_3:
+case_4:
+	BL break
+break:
+.align
+	POP	{pc}
+

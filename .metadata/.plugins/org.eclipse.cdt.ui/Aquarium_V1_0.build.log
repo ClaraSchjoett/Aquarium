@@ -1,50 +1,45 @@
-09:59:40 **** Incremental Build of configuration Debug for project Aquarium_V1_0 ****
+21:11:27 **** Incremental Build of configuration Debug for project Aquarium_V1_0 ****
 Info: Internal Builder is used for build
+arm-atollic-eabi-gcc -c -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -g -Wa,--no-warn -x assembler-with-cpp -specs=nano.specs -o Src\menu_print_cursor.o ..\Src\menu_print_cursor.s 
 arm-atollic-eabi-gcc -c -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -std=gnu11 -D__weak=__attribute__((weak)) -D__packed=__attribute__((__packed__)) -DUSE_HAL_DRIVER -DSTM32F446xx -I../Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -g -fstack-usage -Wall -specs=nano.specs -o Src\main.o ..\Src\main.c 
 ..\Src\main.c: In function 'main':
-..\Src\main.c:184:20: warning: passing argument 1 of 'menu_print_time' makes integer from pointer without a cast [-Wint-conversion]
-    menu_print_time(&AM, &PM);
-                    ^
-..\Src\main.c:119:6: note: expected 'uint8_t {aka unsigned char}' but argument is of type 'char (*)[6]'
- void menu_print_time (uint8_t HoursSunrise, uint8_t MinutesSunrise,uint8_t HoursSunset, uint8_t MinutesSunset);
-      ^~~~~~~~~~~~~~~
-..\Src\main.c:184:25: warning: passing argument 2 of 'menu_print_time' makes integer from pointer without a cast [-Wint-conversion]
-    menu_print_time(&AM, &PM);
-                         ^
-..\Src\main.c:119:6: note: expected 'uint8_t {aka unsigned char}' but argument is of type 'char (*)[12]'
- void menu_print_time (uint8_t HoursSunrise, uint8_t MinutesSunrise,uint8_t HoursSunset, uint8_t MinutesSunset);
-      ^~~~~~~~~~~~~~~
-..\Src\main.c:184:4: error: too few arguments to function 'menu_print_time'
-    menu_print_time(&AM, &PM);
-    ^~~~~~~~~~~~~~~
-..\Src\main.c:119:6: note: declared here
- void menu_print_time (uint8_t HoursSunrise, uint8_t MinutesSunrise,uint8_t HoursSunset, uint8_t MinutesSunset);
-      ^~~~~~~~~~~~~~~
+..\Src\main.c:259:5: warning: implicit declaration of function 'menu_print_cursor' [-Wimplicit-function-declaration]
+     menu_print_cursor(2);
+     ^~~~~~~~~~~~~~~~~
 ..\Src\main.c: In function 'menu_print_time':
-..\Src\main.c:480:4: warning: implicit declaration of function 'delet_some_chars' [-Wimplicit-function-declaration]
-    delet_some_chars(5);
-    ^~~~~~~~~~~~~~~~
-..\Src\main.c:481:20: warning: passing argument 1 of 'lcd_send_string' from incompatible pointer type [-Wincompatible-pointer-types]
-    lcd_send_string(&sunrise);
-                    ^
-In file included from ..\Src\main.c:46:0:
+..\Src\main.c:709:18: warning: passing argument 1 of 'lcd_send_string' from incompatible pointer type [-Wincompatible-pointer-types]
+  lcd_send_string(&sunrise);
+                  ^
+In file included from ..\Src\main.c:43:0:
 ../Inc/i2c-lcd.h:9:6: note: expected 'char *' but argument is of type 'char (*)[5]'
  void lcd_send_string (char *str);  // send string to the lcd
       ^~~~~~~~~~~~~~~
-..\Src\main.c:487:20: warning: passing argument 1 of 'lcd_send_string' from incompatible pointer type [-Wincompatible-pointer-types]
-    lcd_send_string(&sunset);
-                    ^
-In file included from ..\Src\main.c:46:0:
+..\Src\main.c:715:18: warning: passing argument 1 of 'lcd_send_string' from incompatible pointer type [-Wincompatible-pointer-types]
+  lcd_send_string(&sunset);
+                  ^
+In file included from ..\Src\main.c:43:0:
 ../Inc/i2c-lcd.h:9:6: note: expected 'char *' but argument is of type 'char (*)[5]'
  void lcd_send_string (char *str);  // send string to the lcd
       ^~~~~~~~~~~~~~~
-..\Src\main.c:496:19: warning: passing argument 1 of 'lcd_send_string' from incompatible pointer type [-Wincompatible-pointer-types]
-   lcd_send_string(&realtime);
-                   ^
-In file included from ..\Src\main.c:46:0:
+..\Src\main.c:724:18: warning: passing argument 1 of 'lcd_send_string' from incompatible pointer type [-Wincompatible-pointer-types]
+  lcd_send_string(&realtime);
+                  ^
+In file included from ..\Src\main.c:43:0:
 ../Inc/i2c-lcd.h:9:6: note: expected 'char *' but argument is of type 'char (*)[5]'
  void lcd_send_string (char *str);  // send string to the lcd
       ^~~~~~~~~~~~~~~
+arm-atollic-eabi-gcc -o Aquarium_V1_0.elf Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.o Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cortex.o Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma.o Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma_ex.o Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_flash.o Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_flash_ex.o Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_flash_ramfunc.o Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_gpio.o Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_i2c.o Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_i2c_ex.o Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr.o Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr_ex.o Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc.o Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc_ex.o Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rtc.o Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rtc_ex.o Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.o Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim_ex.o Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_uart.o Src\i2c-lcd.o Src\main.o Src\menu_print_cursor.o Src\stm32f4xx_hal_msp.o Src\stm32f4xx_it.o Src\system_stm32f4xx.o startup\startup_stm32f446xx.o -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -T../STM32F446RE_FLASH.ld -specs=nosys.specs -static -Wl,-Map=Aquarium_V1_0.map -Wl,--gc-sections -Wl,--defsym=malloc_getpagesize_P=0x80 -Wl,--start-group -lc -lm -Wl,--end-group -specs=nano.specs 
+C:\Program Files (x86)\Atollic\TrueSTUDIO for STM32 9.0.1\ide\jre\bin\java -jar C:\Program Files (x86)\Atollic\TrueSTUDIO for STM32 9.0.1\Tools\arm-atollic-reports.jar sizeinfo list Aquarium_V1_0.elf 
+Generate build reports...
+Print size information
+   text	   data	    bss	    dec	    hex	filename
+  24684	    140	   2148	  26972	   695c	Aquarium_V1_0.elf
+Print size information done
+Generate listing file
+Output sent to: Aquarium_V1_0.list
+Generate listing file done
+Generate build reports done
+arm-atollic-eabi-objcopy.exe -O ihex Aquarium_V1_0.elf Aquarium_V1_0.hex 
 
-09:59:40 Build Finished (took 256ms)
+21:11:29 Build Finished (took 2s.116ms)
 

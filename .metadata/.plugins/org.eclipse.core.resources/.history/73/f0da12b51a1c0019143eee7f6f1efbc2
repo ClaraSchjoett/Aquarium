@@ -1,0 +1,10 @@
+.global menu_print_cursor
+
+cursor_jumpto_r_c (2, 2);
+		delete_some_chars(2);
+		cursor_jumpto_r_c (3, 2);
+		delete_some_chars(2);
+		cursor_jumpto_r_c (4, 2);
+		delete_some_chars(2);
+		cursor_jumpto_r_c (1, 2);
+		lcd_send_string("->");
