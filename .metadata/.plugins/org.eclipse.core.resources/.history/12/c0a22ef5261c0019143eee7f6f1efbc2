@@ -43,7 +43,7 @@ case_1:								// The row 1 is chosen.
 
 	MOV		r0, #4
 	MOV		r1, #2
-	BL		cursor_jumpto_r_c
+	BL	cursor_jumpto_r_c
 	MOV		r0, #2
 	BL		delete_some_chars
 
@@ -70,7 +70,7 @@ case_2:							// The row 2 is chosen.
 
 	MOV		r0, #4
 	MOV		r1, #2
-	BL		cursor_jumpto_r_c
+	BL	cursor_jumpto_r_c
 	MOV		r0, #2
 	BL		delete_some_chars
 
@@ -97,7 +97,7 @@ case_3:								// The row 3 is chosen.
 
 	MOV		r0, #4
 	MOV		r1, #2
-	BL		cursor_jumpto_r_c
+	BL	cursor_jumpto_r_c
 	MOV		r0, #2
 	BL		delete_some_chars
 

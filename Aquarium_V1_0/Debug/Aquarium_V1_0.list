@@ -124,7 +124,7 @@ case_1:								// The row 1 is chosen.
  800024a:	f04f 0004 	mov.w	r0, #4
 	MOV		r1, #2
  800024e:	f04f 0102 	mov.w	r1, #2
-	BL	cursor_jumpto_r_c
+	BL		cursor_jumpto_r_c
  8000252:	f003 fe69 	bl	8003f28 <cursor_jumpto_r_c>
 	MOV		r0, #2
  8000256:	f04f 0002 	mov.w	r0, #2
@@ -174,7 +174,7 @@ case_2:							// The row 2 is chosen.
  800029e:	f04f 0004 	mov.w	r0, #4
 	MOV		r1, #2
  80002a2:	f04f 0102 	mov.w	r1, #2
-	BL	cursor_jumpto_r_c
+	BL		cursor_jumpto_r_c
  80002a6:	f003 fe3f 	bl	8003f28 <cursor_jumpto_r_c>
 	MOV		r0, #2
  80002aa:	f04f 0002 	mov.w	r0, #2
@@ -224,7 +224,7 @@ case_3:								// The row 3 is chosen.
  80002f2:	f04f 0004 	mov.w	r0, #4
 	MOV		r1, #2
  80002f6:	f04f 0102 	mov.w	r1, #2
-	BL	cursor_jumpto_r_c
+	BL		cursor_jumpto_r_c
  80002fa:	f003 fe15 	bl	8003f28 <cursor_jumpto_r_c>
 	MOV		r0, #2
  80002fe:	f04f 0002 	mov.w	r0, #2
@@ -274,7 +274,7 @@ case_4:								// The row 4 is chosen.
  8000346:	f04f 0003 	mov.w	r0, #3
 	MOV		r1, #2
  800034a:	f04f 0102 	mov.w	r1, #2
-	BL	cursor_jumpto_r_c
+	BL		cursor_jumpto_r_c
  800034e:	f003 fdeb 	bl	8003f28 <cursor_jumpto_r_c>
 	MOV		r0, #2
  8000352:	f04f 0002 	mov.w	r0, #2
