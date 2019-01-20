@@ -8,6 +8,7 @@ main.c:510:6:RTC_get_Time_and_Date	8	static
 main.c:523:8:read_encoder	16	static
 main.c:542:6:SystemClock_Config	184	static
 main.c:595:13:MX_I2C1_Init	8	static
+main.c:621:6:menu_print_cursor	16	static
 main.c:677:6:menu_print_text	8	static
 main.c:703:6:menu_print_time	48	static
 main.c:732:13:MX_RTC_Init	72	static

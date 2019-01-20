@@ -1,4 +1,4 @@
-.global menu_print_cursor
+/*.global menu_print_cursor
 .extern	cursor_jumpto_r_c			// This function moves the cursor to row x and column y
 .extern delete_some_char			//	Delete x chars
 .extern lcd_send_string				// Print text on LCD
@@ -11,13 +11,13 @@ my_arrow:	.asciz	"->"
 
 
 .text
-.align
+.align*/
 
 /* User Code begin here
  * Brief	display the arrow on the chosen row
  * data		r0 contains the chosen row
 */
-menu_print_cursor:
+/*menu_print_cursor:
 	PUSH	{lr}
 	cmp		r0, #1					//Switch case 1,2,3,4
 	BEQ		case_1					// Compare r0 with the rows and jump if it's equal
@@ -139,5 +139,5 @@ case_4:								// The row 4 is chosen.
 
 end:
 .align
-	POP	{pc}
+	POP	{pc}*/
 
