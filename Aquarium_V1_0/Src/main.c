@@ -111,9 +111,9 @@ static void MX_TIM2_Init(int brightness);
 void set_FL(int brightness);				//set brightness of the FL light
 void set_RGB(int red, int green, int blue); //set RGB value for led strip
 
-void menu_print_cursor (int linenumber);
-void menu_print_text (void);
-void menu_print_time (uint8_t HoursSunrise, uint8_t MinutesSunrise,uint8_t HoursSunset, uint8_t MinutesSunset);
+void menu_print_cursor (int linenumber);	//print Arrow on Display
+void menu_print_text (void);				//print Text (running..., TIME,... on Display
+void menu_print_time (uint8_t HoursSunrise, uint8_t MinutesSunrise,uint8_t HoursSunset, uint8_t MinutesSunset);	//Print Time on Display
 
 void sunrise(void);			// Simulates sunrise
 void sunset(void);			// Simulates sunset
