@@ -617,6 +617,7 @@ static void MX_I2C1_Init(void)
  * @param Gewuenschte Position
  * @retval None
  */
+/*
 void menu_print_cursor (int linenumber)
 {
 	switch(linenumber){
@@ -662,6 +663,7 @@ void menu_print_cursor (int linenumber)
 		break;
 	}
 }
+*/
 
 /**
  * @brief Gibt den Text aus der aendert sich nicht daher braucht sie keine Uebergabewerte
