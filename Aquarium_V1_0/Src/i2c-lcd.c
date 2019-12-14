@@ -7,7 +7,7 @@ extern I2C_HandleTypeDef hi2c1;  // change your handler here accordingly
 
 /*
  * @brief In dieser Datei werden die Grundfunktionen des Display implementiert,
- * die wir später im main gebrauchen können.
+ * die wir spï¿½ter im main gebrauchen kï¿½nnen.
  * Sie bestehen au:
  * 		-lcd_send_cmd
  * 		-lcd_send_data
@@ -30,7 +30,7 @@ extern I2C_HandleTypeDef hi2c1;  // change your handler here accordingly
 
 /*
  * @brief Mit der Funktion lcd_send_cmd koennen
- * Befehle ans Display übergeben werden. Die verschiedenen
+ * Befehle ans Display ï¿½bergeben werden. Die verschiedenen
  * Befehle koennen aus dem Datenblatt entnommen werden.
  * @param Befehl (Hex)
  * @retval None
@@ -79,7 +79,6 @@ void lcd_send_data (char data)
 void lcd_init (void)
 {
 	uint8_t i=0;
-	HAL_Delay(100);
 	for(i=0;i<3;i++)  //sending 3 times: select 4-bit mode
 	{
 		lcd_send_cmd(0x03);
@@ -88,17 +87,18 @@ void lcd_init (void)
 	lcd_send_cmd (0x02);
 	HAL_Delay(100);
 	lcd_send_cmd (0x28);
-	HAL_Delay(1);
+	HAL_Delay(100);
 	lcd_send_cmd (0x0c);
-	HAL_Delay(1);
+	HAL_Delay(100);
 	lcd_send_cmd (0x80);
-	HAL_Delay(1);
+	HAL_Delay(100);
 	lcd_send_cmd (0x01);
+	HAL_Delay(100);
 }
 
 /*
  * @brief Dieser Funktion kann man einen String uebergeben und sie
- * gibt den Text auf dem Display aus, indem sie für jeden
+ * gibt den Text auf dem Display aus, indem sie fï¿½r jeden
  * Character die Funktion lcd_send_data aufruft.
  * @param Text
  * @retval None
@@ -106,12 +106,12 @@ void lcd_init (void)
 
 void lcd_send_string (char *str)
 {
-	while (*str) lcd_send_data (*str++);
+	while (*str){ lcd_send_data(*str++);}
 }
 
 /*
  * @brief Dieser Funktion kann man den Ort (Reihe und Spalte)
- * angeben wo man hinspringen möchte und sie versetzt den
+ * angeben wo man hinspringen mï¿½chte und sie versetzt den
  * Cursor an den richtigen Ort.
  * @param Zeile, Spalte
  * @retval None
@@ -131,11 +131,12 @@ void cursor_jumpto_r_c (uint8_t row, uint8_t column)
 	}
 	mycmd += (column-1);
 	lcd_send_cmd (mycmd);
+	HAL_Delay(10);
 }
 
 /*
  * @brief Diese Funktion verschiebt den Cursor um einen Character
- * nach links. Die Funktion wird bei löschen gebraucht.
+ * nach links. Die Funktion wird bei lï¿½schen gebraucht.
  * @param None
  * @retval None
  */
@@ -160,7 +161,7 @@ void cursor_shift_right(void)
 /*
  * @brief Diese Funktion kann den Cursor um eine gewuenschte
  * Anzahl Character nach links verschieben. Sie wir beim Loeschen graucht.
- * @param Anzahl Sprünge
+ * @param Anzahl Sprï¿½nge
  * @retval None
  */
 
@@ -175,7 +176,7 @@ void cursor_shift_left_ntime(uint8_t number)
 /*
  * @brief Diese Funktion kann den Cursor um eine gewuenschte
  * Anzahl Character nach rechts verschieben.
- * @param Anzahl Sprünge
+ * @param Anzahl Sprï¿½nge
  * @retval None
  */
 
@@ -190,7 +191,7 @@ void cursor_shift_right_ntime(uint8_t number)
 /*
  * @brief Diese kann eine ganze Zeile loeschen.
  * Ihr muss die Zeile die geloescht werden soll
- * übergeben werden.
+ * ï¿½bergeben werden.
  * Sie "ueberschreibt" die Zeile mit Leerzeichen.
  * @param Zeilennummer
  * @retval None
@@ -226,13 +227,17 @@ void delete_current_char(void)
 
 void delete_some_chars (uint8_t number)
 {
-	char delete_me[number];
+	char delete_me= ' ';
 
-	for (int i=0; i<number; i++){
-		delete_me[i]=' ';
+	for(int i = number; i > 0; i--)
+	{
+		lcd_send_data (delete_me);
 	}
-	lcd_send_string (&delete_me);		// Ueberschreibe mit leerem String
-	cursor_shift_left_ntime(number);	// laufe mit dem Cursor zurueck
+
+	for(int i = number; i > 0; i--)
+	{
+		cursor_shift_left();
+	}
 }
 
 /*

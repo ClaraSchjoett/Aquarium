@@ -47,6 +47,17 @@
 /* Private typedef -----------------------------------------------------------*/
 
 /* Private define ------------------------------------------------------------*/
+#define	BRIGHTNESS_STEP_RED		5
+#define	BRIGHTNESS_STEP_GREEN	5
+#define	BRIGHTNESS_STEP_BLUE	10
+#define	BRIGHTNESS_STEP_FL		10
+#define RAMPDOWN_DIVIDER		4
+
+#define AFTERGLOW
+#define AFTERGLOW_DURATION_MIN	60
+#define AFTERGLOW_BRIGHTNESS	1000 // 1000 max
+
+
 
 /* Private macro -------------------------------------------------------------*/
 
@@ -72,18 +83,25 @@ int ITreason = 0;				// Interrupt reason. Variable not used in this version.
 int *pITreason = &ITreason;		// Enables us to access variable ITreason in other source files.
 uint8_t old_AB = 0;
 
-int menue_state = 1;			// 4 possible states. Menu contains 4 lines on LCD display.
-int state = 0;					// Sunrise, sunset or neither
-int button_pressed = 0;
+typedef enum {
+	state_sunrise = 1,
+	state_sunset,
+} state_t;
+state_t state;
+
+GPIO_PinState button_pressed = GPIO_PIN_RESET;
 
 int sunset_timer = 0;
 int sunrise_timer = 0;
 int display_timer = 0;			// Minute display 
+int start_afterglow = 0;
 
 int red = 0;
 int green = 0;
 int blue = 0;
 int FLbrightness = 0;
+
+int menue_state = 1;
 
 uint8_t  u8SampleButton = 0;
 uint8_t  u8SampleLastButton = 0;
@@ -187,42 +205,24 @@ int main(void)
 		}
 
 
-
-
 		if(sunriseTime.Hours == myTime.Hours){			// Check if the current time equals the set sunrise time.
 			if(sunriseTime.Minutes == myTime.Minutes){
-				state=1;//sunrise state
-			}
-		}
-		if(sunriseTime.Hours+1 == myTime.Hours){		// Check if the current time equals the quick dim-down time.
-			if(sunriseTime.Minutes == myTime.Minutes){
-				state=3;
+				state = state_sunrise;
 			}
 		}
 
 		if(sunsetTime.Hours == myTime.Hours){			// Check if the current time equals the set sunset time.
 			if(sunsetTime.Minutes == myTime.Minutes){
-				state=2;
-			}
-		}
-		if(sunsetTime.Hours-1 == myTime.Hours){			// Check if the current time equals the quick turn-on time.
-			if(sunsetTime.Minutes == myTime.Minutes){
-				state=4;
+				state = state_sunset;
 			}
 		}
 
 		switch (state) {	 		//taeglicher zyklus mit stateevent
-		case 1:
+		case state_sunrise:
 			sunrise();
 			break;
-		case 2:
+		case state_sunset:
 			sunset();
-			break;
-		case 3:
-			LED_Dimm_Down();
-			break;
-		case 4:
-			LED_Dimm_Up();
 			break;
 		default:
 
@@ -231,10 +231,10 @@ int main(void)
 
 
 		//taster auslesen (positive flankentriggerung)
-		button_pressed=0;
+		button_pressed = GPIO_PIN_RESET;
 		u8SampleButton = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_1);
 		if((u8SampleButton != 0) && (u8SampleLastButton == 0)){
-		  button_pressed=1;
+		  button_pressed = GPIO_PIN_SET;
 		}
 		u8SampleLastButton = u8SampleButton;
 
@@ -391,16 +391,32 @@ void sunrise(void)
 	RTC_get_Time_and_Date();
 	if((red<=1000) && (green<=1000) && (blue<=1000) && (FLbrightness<=1000))//nur dimmen wenn max helligkeit noch nicht erreicht
 	{
-		if(sunrise_timer!=myTime.Seconds)//jede sekunde
+		if(sunrise_timer != myTime.Seconds)//jede sekunde
 		{
-			red=red+25;
-			green=green+8;
-			blue=blue+1;
-			FLbrightness=FLbrightness+25;
+			red 			+= BRIGHTNESS_STEP_RED;
+			green 			+= BRIGHTNESS_STEP_GREEN;
+			blue			+= BRIGHTNESS_STEP_BLUE;
+			FLbrightness	+= BRIGHTNESS_STEP_FL;
+
 			set_FL(FLbrightness);
 			set_RGB(red,green,blue);
-			sunrise_timer=myTime.Seconds;
+
+			sunrise_timer = myTime.Seconds;
 		}
+	}
+	else if ((red >= BRIGHTNESS_STEP_RED) && (green >= BRIGHTNESS_STEP_GREEN) && (blue >= BRIGHTNESS_STEP_BLUE))
+	{
+			red 			-= BRIGHTNESS_STEP_RED * RAMPDOWN_DIVIDER;
+			green 			-= BRIGHTNESS_STEP_GREEN * RAMPDOWN_DIVIDER;
+			blue			-= BRIGHTNESS_STEP_BLUE * RAMPDOWN_DIVIDER;
+			set_RGB(red,green,blue);
+	}
+	else
+	{
+			red 			= 0;
+			green 			= 0;
+			blue			= 0;
+			set_RGB(red,green,blue);
 	}
 }
 
@@ -412,32 +428,65 @@ void sunrise(void)
 void sunset(void)
 {
 	RTC_get_Time_and_Date();
-	if((red>=25) && (green>=8) && (blue>=1) && (FLbrightness>=25))//nur dimmen wenn die Led noch leuchten
+	if(FLbrightness >= 25)//nur dimmen wenn die Led noch leuchten
 	{
-		if(sunrise_timer!=myTime.Seconds)//jede sekunde
+		if(sunrise_timer != myTime.Seconds)//jede sekunde
 		{
-			red=red-25;
-			green=green-8;
-			blue=blue-1;
-			FLbrightness=FLbrightness-25;
+			FLbrightness	-= BRIGHTNESS_STEP_FL;
 			set_FL(FLbrightness);
-			set_RGB(red,green,blue);
+
 			sunrise_timer=myTime.Seconds;
 		}
 	}
 	else //unterlauf der variablen fuer die helligkeit abfangen
 	{
-		if(sunrise_timer!=myTime.Seconds)//jede sekunde
+
+#ifdef AFTERGLOW
+		start_afterglow = myTime.Seconds;
+
+		if ( myTime.Seconds < start_afterglow + AFTERGLOW_DURATION_MIN)
 		{
-			red=0;
-			green=0;
-			blue=0;
-			FLbrightness=0;
+			if ((sunrise_timer != myTime.Seconds) && (blue < AFTERGLOW_BRIGHTNESS))//jede sekunde
+			{
+				red				= 0;
+				green			= 0;
+				blue			+= BRIGHTNESS_STEP_BLUE;
+				FLbrightness	= 0;
+
+				set_FL(FLbrightness);
+				set_RGB(red,green,blue);
+
+				sunrise_timer=myTime.Seconds;
+			}
+		}
+		else
+		{
+			red				= 0;
+			green			= 0;
+			blue			= 0;
+			FLbrightness	= 0;
+
 			set_FL(FLbrightness);
 			set_RGB(red,green,blue);
+
 			sunrise_timer=myTime.Seconds;
 		}
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10,GPIO_PIN_RESET);
+#else
+		if(sunrise_timer != myTime.Seconds)//jede sekunde
+		{
+			red				= 0;
+			green			= 0;
+			blue			= 0;
+			FLbrightness	= 0;
+
+			set_FL(FLbrightness);
+			set_RGB(red,green,blue);
+
+			sunrise_timer=myTime.Seconds;
+		}
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10,GPIO_PIN_RESET);
+#endif
 	}
 }
 
@@ -702,26 +751,26 @@ void menu_print_text (void)
 
 void menu_print_time (uint8_t HoursSunrise, uint8_t MinutesSunrise,uint8_t HoursSunset, uint8_t MinutesSunset)
 {
-	char sunrise[5];
+	char sunrise[6];
 	sprintf(sunrise, "%02d:%02d",HoursSunrise,MinutesSunrise);
 	cursor_jumpto_r_c(3, 15);
 	//delete_some_chars(5);
-	lcd_send_string(&sunrise);
+	lcd_send_string(sunrise);
 
-	char sunset[5];
+	char sunset[6];
 	sprintf(sunset, "%02d:%02d",HoursSunset,MinutesSunset);
 	cursor_jumpto_r_c(4, 15);
 	//delete_some_chars(5);
-	lcd_send_string(&sunset);
+	lcd_send_string(sunset);
 
 
 	RTC_get_Time_and_Date();
 
-	char realtime[5];
+	char realtime[6];
 	sprintf(realtime, "%02d:%02d",myTime.Hours,myTime.Minutes);
 	cursor_jumpto_r_c(2, 15);
 	//delete_some_chars(5);
-	lcd_send_string(&realtime);
+	lcd_send_string(realtime);
 }
 
 /**
